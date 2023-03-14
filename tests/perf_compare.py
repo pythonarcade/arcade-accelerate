@@ -5,7 +5,7 @@ import timeit
 
 
 def print_results(name, r1, r2):
-    ratio  = r2 / r1
+    ratio  = r1 / r2
     print(
         f"{name}: arcade={r1:.6f} rust={r2:.6f} {ratio:.6f} x",
         f"{'faster' if ratio > 1 else 'slower'}",
