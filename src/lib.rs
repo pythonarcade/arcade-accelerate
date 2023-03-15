@@ -56,12 +56,12 @@ impl AdjustableHitBox {
         let rad_cos = rad.cos();
         let rad_sin = rad.sin();
         for point in self.hitbox.points.iter() {
-            new_points.push(self.adjust_point(point, rad_cos, rad_sin));
+            new_points.push(self.adjust_point(*point, rad_cos, rad_sin));
         }
         new_points
     }
 
-    fn adjust_point(&self, point: &(f32, f32), cos: f32, sin: f32) -> (f32, f32) {
+    fn adjust_point(&self, point: (f32, f32), cos: f32, sin: f32) -> (f32, f32) {
         let (mut x, mut y) = point;
         x = ((x * cos - y * sin) * self.scale.0) + self.position.0;
         y = ((x * sin + y * cos) * self.scale.0) + self.position.0;
