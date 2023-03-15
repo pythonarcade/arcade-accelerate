@@ -18,10 +18,23 @@ arcade_accelerate.bootstrap()
 * Install the arcade version you are comparing with
   * Preferably install from source in editable mode
 
-Build and install package (debug and release)
+Install the create as module in the current virtualenv
 
-    maturin build
-    maturin build --release
+```sh
+# debug
+maturin develop
+# release
+maturin develop --release
+```
+
+Build python package for release
+
+```bash
+# wheel
+maturin build -i python --release
+# sdist
+maturin build -i python --release --sdist
+```
 
 When performance testing always use the release build.
 
