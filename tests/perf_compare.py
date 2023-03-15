@@ -11,37 +11,27 @@ def print_results(name, r1, r2):
         f"{'faster' if ratio > 1 else 'slower'}",
     )
 
-def rotate_point():
-    # rotate
+
+def compare_functions(command_1: str, command_2: str, command_1_setup: str = "import arcade"):
     r1 = timeit.timeit(
-        'arcade.math.rotate_point(2.0, 2.0, 3.0, 3.0, 90)',
-        setup='import arcade',
+        command_1,
+        setup=command_1_setup,
         number=1_000_000,
     )
     r2 = timeit.timeit(
-        'arcade_accelerate_rust.rotate_point((2.0, 2.0), (3.0, 3.0), 90)',
+        f'arcade_accelerate_rust.{command_2}',
         setup='import arcade_accelerate_rust',
         number=1_000_000,
     )
-    print_results('rotate_point', r1, r2)
-
-
-def clamp():
-    # rotate
-    r1 = timeit.timeit(
-        'arcade.math.clamp(2.0, 2.0, 3.0)',
-        setup='import arcade',
-        number=1_000_000,
-    )
-    r2 = timeit.timeit(
-        'arcade_accelerate_rust.clamp(2.0, 2.0, 90)',
-        setup='import arcade_accelerate_rust',
-        number=1_000_000,
-    )
-    print_results('clamp', r1, r2)
+    print_results(command_2, r1, r2)
 
 
 if __name__ == '__main__':
-    rotate_point()
-    clamp()
-
+    compare_functions(
+        command_1='arcade.math.rotate_point(2.0, 2.0, 3.0, 3.0, 90.0)',
+        command_2='rotate_point((2.0, 2.0), (3.0, 3.0), 90)',
+    )
+    compare_functions(
+        command_1="arcade.math.clamp(2.0, 2.0, 3.0)",
+        command_2="clamp(2.0, 2.0, 3.0)",
+    )
