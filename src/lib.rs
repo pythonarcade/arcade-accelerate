@@ -22,9 +22,21 @@ fn rotate_point(point: (f32, f32), center: (f32, f32), angle: f32) -> (f32, f32)
     (x, y)
 }
 
+#[pyfunction]
+fn clamp(value: f32, min: f32, max: f32) -> f32 {
+    if value < min {
+        min
+    } else if value > max {
+        max
+    } else {
+        value
+    }
+}
+
 /// A Python module implemented in Rust.
 #[pymodule]
 fn arcade_accelerate_rust(_py: Python, m: &PyModule) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(rotate_point, m)?)?;
+    m.add_function(wrap_pyfunction!(clamp, m)?)?;
     Ok(())
 }

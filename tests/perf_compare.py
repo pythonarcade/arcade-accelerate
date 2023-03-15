@@ -26,5 +26,22 @@ def rotate_point():
     print_results('rotate_point', r1, r2)
 
 
+def clamp():
+    # rotate
+    r1 = timeit.timeit(
+        'arcade.math.clamp(2.0, 2.0, 3.0)',
+        setup='import arcade',
+        number=1_000_000,
+    )
+    r2 = timeit.timeit(
+        'arcade_accelerate_rust.clamp(2.0, 2.0, 90)',
+        setup='import arcade_accelerate_rust',
+        number=1_000_000,
+    )
+    print_results('clamp', r1, r2)
+
+
 if __name__ == '__main__':
     rotate_point()
+    clamp()
+
