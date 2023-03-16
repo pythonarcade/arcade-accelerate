@@ -1,5 +1,6 @@
 import arcade
-import arcade_accelerate_rust
+
+from arcade_accelerate import arcade_accelerate
 
 
 def bootstrap():
@@ -9,10 +10,10 @@ def bootstrap():
 
 
 def patch_hitboxes():
-    print("hereere")
-    arcade.hitbox.base.HitBox = arcade_accelerate_rust.HitBox
-    arcade.hitbox.base.AdjustableHitBox = arcade_accelerate_rust.AdjustableHitBox
+    arcade.hitbox.base.HitBox = arcade_accelerate.HitBox
+    arcade.hitbox.base.AdjustableHitBox = arcade_accelerate.AdjustableHitBox
 
 
 def patch_rotate_point():
-    arcade.math.rotate_point = arcade_accelerate_rust.rotate_point
+    arcade.math.rotate_point = arcade_accelerate.rotate_point
+    arcade.math.rotate_point = arcade_accelerate.rotate_point
