@@ -62,9 +62,12 @@ impl AdjustableHitBox {
         )
     }
 
-    fn get_adjusted_points(self_: PyRef<'_, Self>, py: Python<'_>) -> PyResult<PyTuple> {
+    fn get_adjusted_points(self_: PyRef<'_, Self>, py: Python<'_>) -> Vec<(f32, f32)> {
         let super_ = self_.as_ref();
-        let old_points: Vec<(f32, f32)> = super_.points.extract(py)?;
+        let old_points: Vec<(f32, f32)> = super_
+            .points
+            .extract(py)
+            .expect("Failed to convert PyTuple to Vec");
         let mut new_points: Vec<(f32, f32)> = Vec::with_capacity(old_points.len());
 
         let rad = self_.angle.to_radians();
@@ -74,8 +77,7 @@ impl AdjustableHitBox {
             new_points.push(self_.adjust_point(*point, rad_cos, rad_sin));
         }
 
-        let tuple: &PyTuple = PyTuple::new(py, new_points);
-        Ok(*tuple)
+        new_points
     }
 
     fn adjust_point(&self, point: (f32, f32), cos: f32, sin: f32) -> (f32, f32) {
