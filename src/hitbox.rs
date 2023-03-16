@@ -1,6 +1,6 @@
 use pyo3::prelude::*;
 
-#[pyclass(subclass)]
+#[pyclass(subclass, module = "arcade.hitbox.base")]
 pub struct HitBox {
     #[pyo3(get)]
     points: Vec<(f32, f32)>,
@@ -33,7 +33,7 @@ impl HitBox {
     }
 }
 
-#[pyclass(extends=HitBox)]
+#[pyclass(extends=HitBox, module="arcade.hitbox.base")]
 pub struct AdjustableHitBox {
     position: (f32, f32),
     angle: f32,
