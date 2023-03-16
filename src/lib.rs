@@ -39,8 +39,11 @@ impl HitBox {
 
 #[pyclass(extends=HitBox)]
 struct AdjustableHitBox {
+    #[pyo3(get, set)]
     position: (f32, f32),
+    #[pyo3(get, set)]
     angle: f32,
+    #[pyo3(get, set)]
     scale: (f32, f32),
 }
 
@@ -64,7 +67,7 @@ impl AdjustableHitBox {
     }
 
     fn get_adjusted_points(self_: PyRef<'_, Self>, py: Python<'_>) -> Vec<(f32, f32)> {
-        let super_ = self_.as_ref();
+        let super_: &HitBox = self_.as_ref();
         let old_points: Vec<(f32, f32)> = super_
             .points
             .extract(py)
@@ -86,6 +89,54 @@ impl AdjustableHitBox {
         x = ((x * cos - y * sin) * self.scale.0) + self.position.0;
         y = ((x * sin + y * cos) * self.scale.0) + self.position.0;
         (x, y)
+    }
+
+    #[getter]
+    fn left(self_: PyRef<'_, Self>, py: Python<'_>) -> PyResult<f32> {
+        let super_: &HitBox = self_.as_ref();
+        let mut converted: Vec<(f32, f32)> = super_
+            .points
+            .extract(py)
+            .expect("Failed to convert PyTuple to Vec");
+
+        converted.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap());
+        Ok(converted[0].0)
+    }
+
+    #[getter]
+    fn right(self_: PyRef<'_, Self>, py: Python<'_>) -> PyResult<f32> {
+        let super_: &HitBox = self_.as_ref();
+        let mut converted: Vec<(f32, f32)> = super_
+            .points
+            .extract(py)
+            .expect("Failed to convert PyTuple to Vec");
+
+        converted.sort_by(|a, b| b.0.partial_cmp(&a.0).unwrap());
+        Ok(converted[0].0)
+    }
+
+    #[getter]
+    fn bottom(self_: PyRef<'_, Self>, py: Python<'_>) -> PyResult<f32> {
+        let super_: &HitBox = self_.as_ref();
+        let mut converted: Vec<(f32, f32)> = super_
+            .points
+            .extract(py)
+            .expect("Failed to convert PyTuple to Vec");
+
+        converted.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap());
+        Ok(converted[0].1)
+    }
+
+    #[getter]
+    fn top(self_: PyRef<'_, Self>, py: Python<'_>) -> PyResult<f32> {
+        let super_: &HitBox = self_.as_ref();
+        let mut converted: Vec<(f32, f32)> = super_
+            .points
+            .extract(py)
+            .expect("Failed to convert PyTuple to Vec");
+
+        converted.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap());
+        Ok(converted[0].1)
     }
 }
 
