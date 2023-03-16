@@ -85,36 +85,28 @@ impl AdjustableHitBox {
 
     #[getter]
     fn left(self_: PyRef<'_, Self>) -> PyResult<f32> {
-        let super_: &HitBox = self_.as_ref();
-        let mut converted: Vec<(f32, f32)> = super_.points.to_vec();
-
+        let mut converted: Vec<(f32, f32)> = AdjustableHitBox::get_adjusted_points(self_);
         converted.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap());
         Ok(converted[0].0)
     }
 
     #[getter]
     fn right(self_: PyRef<'_, Self>) -> PyResult<f32> {
-        let super_: &HitBox = self_.as_ref();
-        let mut converted: Vec<(f32, f32)> = super_.points.to_vec();
-
+        let mut converted: Vec<(f32, f32)> = AdjustableHitBox::get_adjusted_points(self_);
         converted.sort_by(|a, b| b.0.partial_cmp(&a.0).unwrap());
         Ok(converted[0].0)
     }
 
     #[getter]
     fn bottom(self_: PyRef<'_, Self>) -> PyResult<f32> {
-        let super_: &HitBox = self_.as_ref();
-        let mut converted: Vec<(f32, f32)> = super_.points.to_vec();
-
+        let mut converted: Vec<(f32, f32)> = AdjustableHitBox::get_adjusted_points(self_);
         converted.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap());
         Ok(converted[0].1)
     }
 
     #[getter]
     fn top(self_: PyRef<'_, Self>) -> PyResult<f32> {
-        let super_: &HitBox = self_.as_ref();
-        let mut converted: Vec<(f32, f32)> = super_.points.to_vec();
-
+        let mut converted: Vec<(f32, f32)> = AdjustableHitBox::get_adjusted_points(self_);
         converted.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap());
         Ok(converted[0].1)
     }

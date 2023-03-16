@@ -1,9 +1,7 @@
 use pyo3::prelude::*;
 
 #[pyfunction]
-pub fn rotate_point(point: (f32, f32), center: (f32, f32), angle: f32) -> (f32, f32) {
-    let (x, y) = point;
-    let (cx, cy) = center;
+pub fn rotate_point(x: f32, y: f32, cx: f32, cy: f32, angle: f32) -> (f32, f32) {
     let s = angle.sin();
     let c = angle.cos();
 
