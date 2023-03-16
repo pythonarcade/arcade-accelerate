@@ -2,7 +2,7 @@ use pyo3::prelude::*;
 
 #[pyclass(subclass, module = "arcade.hitbox.base")]
 pub struct HitBox {
-    #[pyo3(get)]
+    #[pyo3(get, set)]
     points: Vec<(f32, f32)>,
 }
 
@@ -79,7 +79,7 @@ impl AdjustableHitBox {
     fn adjust_point(&self, point: (f32, f32), cos: f32, sin: f32) -> (f32, f32) {
         let (mut x, mut y) = point;
         x = ((x * cos - y * sin) * self.scale.0) + self.position.0;
-        y = ((x * sin + y * cos) * self.scale.0) + self.position.0;
+        y = ((x * sin + y * cos) * self.scale.1) + self.position.1;
         (x, y)
     }
 
