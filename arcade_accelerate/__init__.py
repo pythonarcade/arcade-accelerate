@@ -6,10 +6,11 @@ import arcade_accelerate_rust
 
 def bootstrap():
     """Replace arcade math functions with rust accelerated versions."""
-    patch_rotate_point()
+    patch_math()
+    patch_geometry()
     patch_hitboxes()
 
-    exclude = ["arcade.hitbox.base", "arcade.math"]
+    exclude = ["arcade.hitbox.base", "arcade.math", "arcade.geometry.geometry_python"]
 
     pkgs = []
     for mod in exclude:
@@ -38,7 +39,8 @@ def patch_hitboxes():
     arcade.hitbox.base.AdjustableHitBox = arcade_accelerate_rust.AdjustableHitBox
 
 
-def patch_rotate_point():
+def patch_math():
     arcade.math.rotate_point = arcade_accelerate_rust.rotate_point
-    arcade.math.rotate_point = arcade_accelerate_rust.rotate_point
-    arcade.math.rotate_point = arcade_accelerate_rust.rotate_point
+
+def patch_geometry():
+    arcade.geometry.geometry_python.are_polygons_intersecting = arcade_accelerate_rust.are_polygons_intersecting
