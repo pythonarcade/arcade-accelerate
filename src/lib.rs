@@ -23,12 +23,10 @@ impl HitBox {
         position: (f32, f32),
         angle: f32,
         scale: (f32, f32),
-    ) -> PyResult<PyObject> {
+    ) -> PyResult<Py<AdjustableHitBox>> {
         let v: Vec<(f32, f32)> = self.points.extract(py)?;
-        let adjustable: PyObject =
-            Py::new(py, AdjustableHitBox::__new__(v, position, angle, scale))
-                .unwrap()
-                .into_py(py);
+        let adjustable: Py<AdjustableHitBox> =
+            Py::new(py, AdjustableHitBox::__new__(v, position, angle, scale)).unwrap();
         Ok(adjustable)
     }
 
@@ -41,9 +39,7 @@ impl HitBox {
 struct AdjustableHitBox {
     #[pyo3(get, set)]
     position: (f32, f32),
-    #[pyo3(get, set)]
     angle: f32,
-    #[pyo3(get, set)]
     scale: (f32, f32),
 }
 
@@ -55,15 +51,12 @@ impl AdjustableHitBox {
         position: (f32, f32),
         angle: f32,
         scale: (f32, f32),
-    ) -> (Self, HitBox) {
-        (
-            AdjustableHitBox {
-                position: position,
-                angle: angle,
-                scale: scale,
-            },
-            HitBox::__new__(points),
-        )
+    ) -> PyClassInitializer<Self> {
+        PyClassInitializer::from(HitBox::__new__(points)).add_subclass(AdjustableHitBox {
+            position: position,
+            angle: angle,
+            scale: scale,
+        })
     }
 
     fn get_adjusted_points(self_: PyRef<'_, Self>, py: Python<'_>) -> Vec<(f32, f32)> {
