@@ -33,10 +33,13 @@ impl HitBox {
     }
 }
 
-#[pyclass(extends=HitBox, module="arcade.hitbox.base")]
+#[pyclass(extends=HitBox, module = "arcade.hitbox.base")]
 pub struct AdjustableHitBox {
+    #[pyo3(get, set)]
     position: (f32, f32),
+    #[pyo3(get, set)]
     angle: f32,
+    #[pyo3(get, set)]
     scale: (f32, f32),
 }
 
@@ -51,9 +54,9 @@ impl AdjustableHitBox {
     ) -> (Self, HitBox) {
         (
             AdjustableHitBox {
-                position: position,
-                angle: angle,
-                scale: scale,
+                position,
+                angle,
+                scale,
             },
             HitBox::new(points),
         )
