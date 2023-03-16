@@ -1,47 +1,43 @@
 use pyo3::prelude::*;
+use pyo3::types::PyTuple;
 
-struct Point {
-    x: f32,
-    y: f32,
-}
-
-trait BaseHitBox {}
-
-#[pyclass]
+#[pyclass(subclass)]
 struct HitBox {
-    points: Vec<(f32, f32)>,
+    points: Py<PyTuple>,
 }
 
 #[pymethods]
 impl HitBox {
     #[new]
-    fn py_new(points: Vec<(f32, f32)>) -> Self {
-        HitBox { points: points }
+    fn __new__(points: Vec<(f32, f32)>) -> HitBox {
+        Python::with_gil(|py| {
+            let tuple: Py<PyTuple> = PyTuple::new(py, points).into();
+            HitBox { points: tuple }
+        })
     }
 
     fn create_adjustable(
         &self,
+        py: Python<'_>,
         position: (f32, f32),
         angle: f32,
         scale: (f32, f32),
-    ) -> AdjustableHitBox {
-        let adjustable: AdjustableHitBox = AdjustableHitBox {
-            hitbox: *self,
-            position: position,
-            angle: angle,
-            scale: scale,
-        };
-        adjustable
+    ) -> PyResult<PyObject> {
+        let v: Vec<(f32, f32)> = self.points.extract(py)?;
+        let adjustable: PyObject =
+            Py::new(py, AdjustableHitBox::__new__(v, position, angle, scale))
+                .unwrap()
+                .into_py(py);
+        Ok(adjustable)
     }
 
-    fn get_adjusted_points(&self) -> &Vec<(f32, f32)> {
+    fn get_adjusted_points(&self) -> &Py<PyTuple> {
         &self.points
     }
 }
 
-#[pyclass]
+#[pyclass(extends=HitBox)]
 struct AdjustableHitBox {
-    hitbox: HitBox,
     position: (f32, f32),
     angle: f32,
     scale: (f32, f32),
@@ -49,16 +45,37 @@ struct AdjustableHitBox {
 
 #[pymethods]
 impl AdjustableHitBox {
-    fn get_adjusted_points(&self) -> Vec<(f32, f32)> {
-        let mut new_points: Vec<(f32, f32)> = Vec::with_capacity(self.hitbox.points.len());
+    #[new]
+    fn __new__(
+        points: Vec<(f32, f32)>,
+        position: (f32, f32),
+        angle: f32,
+        scale: (f32, f32),
+    ) -> (Self, HitBox) {
+        (
+            AdjustableHitBox {
+                position: position,
+                angle: angle,
+                scale: scale,
+            },
+            HitBox::__new__(points),
+        )
+    }
 
-        let rad = &self.angle.to_radians();
+    fn get_adjusted_points(self_: PyRef<'_, Self>, py: Python<'_>) -> PyResult<PyTuple> {
+        let super_ = self_.as_ref();
+        let old_points: Vec<(f32, f32)> = super_.points.extract(py)?;
+        let mut new_points: Vec<(f32, f32)> = Vec::with_capacity(old_points.len());
+
+        let rad = self_.angle.to_radians();
         let rad_cos = rad.cos();
         let rad_sin = rad.sin();
-        for point in self.hitbox.points.iter() {
-            new_points.push(self.adjust_point(*point, rad_cos, rad_sin));
+        for point in old_points.iter() {
+            new_points.push(self_.adjust_point(*point, rad_cos, rad_sin));
         }
-        new_points
+
+        let tuple: &PyTuple = PyTuple::new(py, new_points);
+        Ok(*tuple)
     }
 
     fn adjust_point(&self, point: (f32, f32), cos: f32, sin: f32) -> (f32, f32) {
