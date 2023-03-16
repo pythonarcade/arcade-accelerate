@@ -3,6 +3,7 @@ use pyo3::types::PyTuple;
 
 #[pyclass(subclass)]
 struct HitBox {
+    #[pyo3(get)]
     points: Py<PyTuple>,
 }
 
@@ -124,6 +125,8 @@ fn clamp(value: f32, min: f32, max: f32) -> f32 {
 /// A Python module implemented in Rust.
 #[pymodule]
 fn arcade_accelerate_rust(_py: Python, m: &PyModule) -> PyResult<()> {
+    m.add_class::<HitBox>()?;
+    m.add_class::<AdjustableHitBox>()?;
     m.add_function(wrap_pyfunction!(rotate_point, m)?)?;
     m.add_function(wrap_pyfunction!(clamp, m)?)?;
     Ok(())
