@@ -14,7 +14,7 @@ impl HitBox {
     }
 
     fn create_adjustable(
-        &self,
+        self_: PyRef<'_, Self>,
         py: Python<'_>,
         position: (f32, f32),
         angle: f32,
@@ -22,7 +22,7 @@ impl HitBox {
     ) -> PyResult<Py<AdjustableHitBox>> {
         let adjustable: Py<AdjustableHitBox> = Py::new(
             py,
-            AdjustableHitBox::new(self.points.to_vec(), position, angle, scale),
+            AdjustableHitBox::new(self_.points.to_vec(), position, angle, scale),
         )
         .unwrap();
         Ok(adjustable)
