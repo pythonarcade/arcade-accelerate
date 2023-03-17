@@ -29,9 +29,13 @@ def compare_functions(command_1: str, command_2: str, command_1_setup: str = "im
 if __name__ == '__main__':
     compare_functions(
         command_1='arcade.math.rotate_point(2.0, 2.0, 3.0, 3.0, 90.0)',
-        command_2='rotate_point((2.0, 2.0), (3.0, 3.0), 90)',
+        command_2='rotate_point(2.0, 2.0, 3.0, 3.0, 90)',
     )
     compare_functions(
         command_1="arcade.math.clamp(2.0, 2.0, 3.0)",
         command_2="clamp(2.0, 2.0, 3.0)",
+    )
+    compare_functions(
+        command_1='arcade.geometry.geometry_python.are_polygons_intersecting(((100.0, 100.0),(100.0, 200.0),(200.0, 200.0),(200.0, 100.0)), ((125.0, 125.0),(125.0, 175.0),(175.0, 175.0),(175.0, 125.0)))',
+        command_2='are_polygons_intersecting(((100.0, 100.0),(100.0, 200.0),(200.0, 200.0),(200.0, 100.0)), ((125.0, 125.0),(125.0, 175.0),(175.0, 175.0),(175.0, 125.0)))'
     )
