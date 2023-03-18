@@ -19,8 +19,8 @@ def compare_functions(command_1: str, command_2: str, command_1_setup: str = "im
         number=1_000_000,
     )
     r2 = timeit.timeit(
-        f'arcade_accelerate_rust.{command_2}',
-        setup='import arcade_accelerate_rust',
+        f'arcade_accelerate.{command_2}',
+        setup='from arcade_accelerate import arcade_accelerate',
         number=1_000_000,
     )
     print_results(command_2, r1, r2)
