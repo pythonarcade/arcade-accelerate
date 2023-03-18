@@ -1,16 +1,16 @@
 import sys
 
 import arcade
-from arcade_accelerate import arcade_accelerate
+from arcade_accelerate import arcade_accelerate  # type: ignore
 
 
 def bootstrap():
     """Replace arcade math functions with rust accelerated versions."""
     patch_math()
     patch_geometry()
-    # patch_hitboxes()
+    patch_hitboxes()
 
-    exclude = ["arcade.math", "arcade.geometry.geometry_python"]
+    exclude = ["arcade.hitbox.base", "arcade.math", "arcade.geometry.geometry_python"]
 
     pkgs = []
     for mod in exclude:
@@ -37,7 +37,7 @@ def bootstrap():
 
 def patch_hitboxes():
     arcade.hitbox.base.HitBox = arcade_accelerate.HitBox
-    arcade.hitbox.base.AdjustableHitBox = arcade_accelerate.AdjustableHitBox
+    arcade.hitbox.base.RotatableHitBox = arcade_accelerate.RotatableHitBox
 
 
 def patch_math():
