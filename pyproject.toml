@@ -12,4 +12,5 @@ classifiers = [
 ]
 
 [tool.maturin]
+python-source = "python"
 features = ["pyo3/extension-module"]
