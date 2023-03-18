@@ -10,7 +10,7 @@ def bootstrap():
     patch_geometry()
     patch_hitboxes()
 
-    exclude = ["arcade.hitbox.base", "arcade.math", "arcade.geometry.geometry_python"]
+    exclude = ["arcade.hitbox.base", "arcade.math", "arcade.geometry.geometry"]
 
     pkgs = []
     for mod in exclude:
@@ -45,6 +45,6 @@ def patch_math():
 
 
 def patch_geometry():
-    arcade.geometry.geometry_python.are_polygons_intersecting = (
+    arcade.geometry.geometry.are_polygons_intersecting = (
         arcade_accelerate.are_polygons_intersecting
     )
