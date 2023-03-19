@@ -9,8 +9,9 @@ def bootstrap():
     patch_math()
     patch_geometry()
     patch_hitboxes()
+    patch_spritelist()
 
-    exclude = ["arcade.hitbox.base", "arcade.math", "arcade.geometry.geometry"]
+    exclude = ["arcade.hitbox.base", "arcade.math", "arcade.geometry", "arcade.sprite_list.collision"]
 
     pkgs = []
     for mod in exclude:
@@ -40,11 +41,15 @@ def patch_hitboxes():
     arcade.hitbox.base.RotatableHitBox = arcade_accelerate.RotatableHitBox
 
 
+def patch_spritelist():
+    arcade.sprite_list.collision.check_for_collision_with_list = arcade_accelerate.check_for_collision_with_list
+    arcade.sprite_list.collision._check_for_collision = arcade_accelerate.check_for_collision
+
 def patch_math():
     arcade.math.rotate_point = arcade_accelerate.rotate_point
 
 
 def patch_geometry():
-    arcade.geometry.geometry.are_polygons_intersecting = (
+    arcade.geometry.are_polygons_intersecting = (
         arcade_accelerate.are_polygons_intersecting
     )

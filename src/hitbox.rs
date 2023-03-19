@@ -1,9 +1,10 @@
 use pyo3::prelude::*;
 
+#[derive(Clone)]
 #[pyclass(subclass, module = "arcade.hitbox.base")]
 pub struct HitBox {
     #[pyo3(get, set)]
-    points: Vec<(f32, f32)>,
+    pub points: Vec<(f32, f32)>,
     #[pyo3(get, set)]
     position: (f32, f32),
     #[pyo3(get, set)]
@@ -83,6 +84,20 @@ impl HitBox {
         let mut converted: Vec<(f32, f32)> = HitBox::get_adjusted_points(self_);
         converted.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap());
         Ok(converted[0].1)
+    }
+}
+
+impl HitBox {
+    pub fn get_adjusted_points_native(&self) -> Vec<(f32, f32)> {
+        let mut new_points: Vec<(f32, f32)> = Vec::with_capacity(self.points.len());
+
+        for point in self.points.iter() {
+            let x = (point.0 * self.scale.0) + self.position.0;
+            let y = (point.1 * self.scale.1) + self.position.1;
+            new_points.push((x, y));
+        }
+
+        new_points
     }
 }
 
