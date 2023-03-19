@@ -6,9 +6,10 @@ pub struct HitBox {
     #[pyo3(get, set)]
     pub points: Vec<(f32, f32)>,
     #[pyo3(get, set)]
-    position: (f32, f32),
+    pub position: (f32, f32),
     #[pyo3(get, set)]
-    scale: (f32, f32),
+    pub scale: (f32, f32),
+    adjusted_cache: Option<Vec<(f32, f32)>>,
 }
 
 #[pymethods]
@@ -25,6 +26,7 @@ impl HitBox {
             points,
             position: final_position,
             scale: final_scale,
+            adjusted_cache: None,
         }
     }
 
@@ -59,28 +61,28 @@ impl HitBox {
     }
 
     #[getter]
-    fn left(self_: PyRef<'_, Self>) -> PyResult<f32> {
+    pub fn left(self_: PyRef<'_, Self>) -> PyResult<f32> {
         let mut converted = HitBox::get_adjusted_points(self_);
         converted.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap());
         Ok(converted[0].0)
     }
 
     #[getter]
-    fn right(self_: PyRef<'_, Self>) -> PyResult<f32> {
+    pub fn right(self_: PyRef<'_, Self>) -> PyResult<f32> {
         let mut converted: Vec<(f32, f32)> = HitBox::get_adjusted_points(self_);
         converted.sort_by(|a, b| b.0.partial_cmp(&a.0).unwrap());
         Ok(converted[0].0)
     }
 
     #[getter]
-    fn bottom(self_: PyRef<'_, Self>) -> PyResult<f32> {
+    pub fn bottom(self_: PyRef<'_, Self>) -> PyResult<f32> {
         let mut converted: Vec<(f32, f32)> = HitBox::get_adjusted_points(self_);
         converted.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap());
         Ok(converted[0].1)
     }
 
     #[getter]
-    fn top(self_: PyRef<'_, Self>) -> PyResult<f32> {
+    pub fn top(self_: PyRef<'_, Self>) -> PyResult<f32> {
         let mut converted: Vec<(f32, f32)> = HitBox::get_adjusted_points(self_);
         converted.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap());
         Ok(converted[0].1)
@@ -88,16 +90,20 @@ impl HitBox {
 }
 
 impl HitBox {
-    pub fn get_adjusted_points_native(&self) -> Vec<(f32, f32)> {
-        let mut new_points: Vec<(f32, f32)> = Vec::with_capacity(self.points.len());
+    pub fn get_adjusted_points_native(&mut self) -> &Vec<(f32, f32)> {
+        if self.adjusted_cache.is_none() {
+            let mut new_points: Vec<(f32, f32)> = Vec::with_capacity(self.points.len());
 
-        for point in self.points.iter() {
-            let x = (point.0 * self.scale.0) + self.position.0;
-            let y = (point.1 * self.scale.1) + self.position.1;
-            new_points.push((x, y));
+            for point in self.points.iter() {
+                let x = (point.0 * self.scale.0) + self.position.0;
+                let y = (point.1 * self.scale.1) + self.position.1;
+                new_points.push((x, y));
+            }
+
+            self.adjusted_cache = Some(new_points);
         }
 
-        new_points
+        self.adjusted_cache.as_ref().unwrap()
     }
 }
 

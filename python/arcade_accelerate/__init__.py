@@ -43,7 +43,6 @@ def patch_hitboxes():
 
 def patch_spritelist():
     arcade.sprite_list.collision.check_for_collision_with_list = arcade_accelerate.check_for_collision_with_list
-    arcade.sprite_list.collision._check_for_collision = arcade_accelerate.check_for_collision
 
 def patch_math():
     arcade.math.rotate_point = arcade_accelerate.rotate_point
