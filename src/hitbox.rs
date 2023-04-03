@@ -9,7 +9,6 @@ pub struct HitBox {
     pub position: (f32, f32),
     #[pyo3(get, set)]
     pub scale: (f32, f32),
-    adjusted_cache: Option<Vec<(f32, f32)>>,
 }
 
 #[pymethods]
@@ -26,7 +25,6 @@ impl HitBox {
             points,
             position: final_position,
             scale: final_scale,
-            adjusted_cache: None,
         }
     }
 
@@ -90,23 +88,20 @@ impl HitBox {
 }
 
 impl HitBox {
-    pub fn get_adjusted_points_native(&mut self) -> &Vec<(f32, f32)> {
-        if self.adjusted_cache.is_none() {
-            let mut new_points: Vec<(f32, f32)> = Vec::with_capacity(self.points.len());
+    pub fn get_adjusted_points_native(self) -> Vec<(f32, f32)> {
+        let mut new_points: Vec<(f32, f32)> = Vec::with_capacity(self.points.len());
 
-            for point in self.points.iter() {
-                let x = (point.0 * self.scale.0) + self.position.0;
-                let y = (point.1 * self.scale.1) + self.position.1;
-                new_points.push((x, y));
-            }
-
-            self.adjusted_cache = Some(new_points);
+        for point in self.points.iter() {
+            let x = (point.0 * self.scale.0) + self.position.0;
+            let y = (point.1 * self.scale.1) + self.position.1;
+            new_points.push((x, y));
         }
 
-        self.adjusted_cache.as_ref().unwrap()
+        new_points
     }
 }
 
+#[derive(Clone)]
 #[pyclass(extends=HitBox, module = "arcade.hitbox.base")]
 pub struct RotatableHitBox {
     #[pyo3(get, set)]
@@ -129,7 +124,7 @@ impl RotatableHitBox {
         )
     }
 
-    fn get_adjusted_points(self_: PyRef<'_, Self>) -> Vec<(f32, f32)> {
+    pub fn get_adjusted_points(self_: PyRef<'_, Self>) -> Vec<(f32, f32)> {
         let super_: &HitBox = self_.as_ref();
         let mut new_points: Vec<(f32, f32)> = Vec::with_capacity(super_.points.len());
 
@@ -173,3 +168,22 @@ impl RotatableHitBox {
         Ok(converted[0].1)
     }
 }
+
+// impl RotatableHitBox {
+//     pub fn get_adjusted_points_native(self) -> Vec<(f32, f32)> {
+//         let mut new_points: Vec<(f32, f32)> = Vec::with_capacity(self.parent.points.len());
+
+//         let rad = self.angle.to_radians();
+//         let rad_cos = rad.cos();
+//         let rad_sin = rad.sin();
+//         for point in self.parent.points.iter() {
+//             let x = ((point.0 * rad_cos - point.1 * rad_sin) * self.parent.scale.0)
+//                 + self.parent.position.0;
+//             let y = ((point.0 * rad_sin + point.1 * rad_cos) * self.parent.scale.1)
+//                 + self.parent.position.1;
+//             new_points.push((x, y));
+//         }
+
+//         new_points
+//     }
+// }
