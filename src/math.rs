@@ -60,3 +60,28 @@ pub fn lerp_angle(start_angle: f32, end_angle: f32, u: f32) -> f32 {
 
     lerp(temp_start, temp_end, u) % 360.0
 }
+
+#[pyfunction]
+pub fn get_distance(x1: f32, y1: f32, x2: f32, y2: f32) -> f32 {
+    let x = x2 - x1;
+    let y = y2 - y1;
+
+    (x * x + y * y).sqrt()
+}
+
+#[pyfunction]
+pub fn get_angle_degrees(x1: f32, y1: f32, x2: f32, y2: f32) -> f32 {
+    let x_diff = x2 - x1;
+    let y_diff = y2 - y1;
+    let radians = y_diff.atan2(x_diff);
+
+    radians.to_degrees()
+}
+
+#[pyfunction]
+pub fn get_angle_radians(x1: f32, y1: f32, x2: f32, y2: f32) -> f32 {
+    let x_diff = x2 - x1;
+    let y_diff = y2 - y1;
+
+    y_diff.atan2(x_diff)
+}
