@@ -124,4 +124,26 @@ pub fn rand_on_circle(center: (f32, f32), radius: f32) -> (f32, f32) {
      radius * angle.sin() + center.1)
 }
 
+#[pyfunction]
+pub fn rand_on_line(pos1: (f32, f32), pos2: (f32, f32)) -> (f32, f32) {
+    let mut rng = thread_rng();
+    let u: f32 = rng.gen_range(0.0 .. 1.0);
+    
+    lerp_vec(pos1, pos2, u)
+}
 
+#[pyfunction]
+pub fn rand_angle_360_deg() -> f32 {
+    let mut rng = thread_rng();
+    let random_angle: f32 = rng.gen_range(0.0 .. 360.0);
+
+    random_angle
+}
+
+#[pyfunction]
+pub fn rand_angle_spread_deg(angle: f32, half_angle_spread: f32) -> f32 {
+    let mut rng = thread_rng();
+    let s = rng.gen_range(-half_angle_spread .. half_angle_spread);
+
+    angle + s 
+}
