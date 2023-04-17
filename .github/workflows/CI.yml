@@ -49,11 +49,27 @@ jobs:
 
       - run: make lint
 
+  build-dev:
+    runs-on: ubuntu-latest
+    if: "!startsWith(github.ref, 'refs/tags/')"
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Build Wheel
+        uses: PyO3/maturin-action@v1
+        with:
+          target: x86_64
+          args: --release --out dist --find-interpreter
+          manylinux: auto
+
   linux:
     runs-on: ubuntu-latest
     strategy:
       matrix:
         target: [x86_64, x86, aarch64, armv7, s390x, ppc64le]
+    if: "startsWith(github.ref, 'refs/tags/')"
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
@@ -77,6 +93,7 @@ jobs:
     strategy:
       matrix:
         target: [x64, x86]
+    if: "startsWith(github.ref, 'refs/tags/')"
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
@@ -100,6 +117,7 @@ jobs:
     strategy:
       matrix:
         target: [x86_64, aarch64]
+    if: "startsWith(github.ref, 'refs/tags/')"
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
@@ -119,6 +137,7 @@ jobs:
 
   sdist:
     runs-on: ubuntu-latest
+    if: "startsWith(github.ref, 'refs/tags/')"
     steps:
       - uses: actions/checkout@v3
       - name: Build sdist
