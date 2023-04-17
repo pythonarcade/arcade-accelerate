@@ -30,13 +30,13 @@ pub fn check_for_collision_with_list(
         _ => panic!(),
     }
 
-    let main_points: Vec<(f32, f32)>;
-
-    if hitbox1.is_some() {
-        main_points = hitbox1.unwrap().get_adjusted_points_native();
+    let main_points: Vec<(f32, f32)> = if let Some(value) = hitbox1 {
+        value.get_adjusted_points_native()
+    } else if let Some(value) = hitbox2 {
+        RotatableHitBox::get_adjusted_points(value)
     } else {
-        main_points = RotatableHitBox::get_adjusted_points(hitbox2.unwrap());
-    }
+        panic!("unknown hitbox type");
+    };
 
     let sprite_list_list = sprite_list.getattr("sprite_list").unwrap();
     let sprites_to_check: Vec<PyObject> = sprite_list_list.extract().unwrap();
@@ -62,13 +62,13 @@ pub fn check_for_collision_with_list(
             _ => panic!(),
         }
 
-        let other_points: Vec<(f32, f32)>;
-
-        if other_hitbox1.is_some() {
-            other_points = other_hitbox1.unwrap().get_adjusted_points_native();
+        let other_points: Vec<(f32, f32)> = if let Some(value) = other_hitbox1 {
+            value.get_adjusted_points_native()
+        } else if let Some(value) = other_hitbox2 {
+            RotatableHitBox::get_adjusted_points(value)
         } else {
-            other_points = RotatableHitBox::get_adjusted_points(other_hitbox2.unwrap());
-        }
+            panic!("unknown hitbox type");
+        };
 
         let check_2 = are_polygons_intersecting(main_points.to_vec(), other_points);
 
@@ -107,13 +107,13 @@ pub fn check_for_collision_with_lists(
         _ => panic!(),
     }
 
-    let main_points: Vec<(f32, f32)>;
-
-    if hitbox1.is_some() {
-        main_points = hitbox1.unwrap().get_adjusted_points_native();
+    let main_points: Vec<(f32, f32)> = if let Some(value) = hitbox1 {
+        value.get_adjusted_points_native()
+    } else if let Some(value) = hitbox2 {
+        RotatableHitBox::get_adjusted_points(value)
     } else {
-        main_points = RotatableHitBox::get_adjusted_points(hitbox2.unwrap());
-    }
+        panic!("unknown hitbox type")
+    };
 
     for sprite_list in sprite_lists.iter() {
         let sprite_list_list = sprite_list.getattr("sprite_list").unwrap();
@@ -139,13 +139,13 @@ pub fn check_for_collision_with_lists(
                 _ => panic!(),
             }
 
-            let other_points: Vec<(f32, f32)>;
-
-            if other_hitbox1.is_some() {
-                other_points = other_hitbox1.unwrap().get_adjusted_points_native();
+            let other_points: Vec<(f32, f32)> = if let Some(value) = other_hitbox1 {
+                value.get_adjusted_points_native()
+            } else if let Some(value) = other_hitbox2 {
+                RotatableHitBox::get_adjusted_points(value)
             } else {
-                other_points = RotatableHitBox::get_adjusted_points(other_hitbox2.unwrap());
-            }
+                panic!("unknown hitbox type");
+            };
 
             let check_2 = are_polygons_intersecting(main_points.to_vec(), other_points);
 
