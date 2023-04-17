@@ -163,7 +163,7 @@ mod tests {
         result = clamp(0.8, 1.0, 2.0);
         assert!(result == 1.0);
     }
-    
+
     #[test]
     fn test_lerp() {
         let mut result = lerp(2.0, 3.0, 1.0);
@@ -234,7 +234,7 @@ mod tests {
         //0 when x_diff = 0, y_diff = 0
         let mut result = get_angle_degrees(0.0, 0.0, 0.0, 0.0);
         assert!(result == 0.0);
-        
+
         result = get_angle_degrees(0.0, 0.0, 0.0, 3.0);
         assert!(result == 90.0);
 
@@ -248,7 +248,7 @@ mod tests {
         //0 when x_diff = 0, y_diff = 0
         let mut result = get_angle_radians(0.0, 0.0, 0.0, 0.0);
         assert!(result == 0.0);
-        
+
         result = get_angle_radians(0.0, 0.0, 0.0, 3.0);
         assert!(result == pi / 2.0);
 
