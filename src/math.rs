@@ -154,6 +154,7 @@ pub fn rand_vec_degree_spread(angle: f32, half_angle_spread: f32, length: f32) -
     let vel = _Vec2::from_polar(a, length);
     vel.as_tuple()
 }
+
 #[pyfunction]
 pub fn rand_vec_magnitude(angle: f32, lo_magnitude: f32, hi_magnitude: f32) -> (f32, f32) {
     let mut rng = thread_rng();
@@ -167,6 +168,7 @@ struct _Vec2 {
     x: f32,
     y: f32,
 }
+#[allow(dead_code)]
 impl _Vec2 {
     fn from_polar(angle: f32, radius: f32) -> _Vec2 {
         let rads = angle.to_radians();
@@ -176,40 +178,41 @@ impl _Vec2 {
         }
     }
 
-    fn as_tuple(self) -> (f32, f32) {
+    fn as_tuple(&self) -> (f32, f32) {
         (self.x, self.y)
     }
-    fn __add__(self, other: _Vec2) -> _Vec2 {
+
+    fn __add__(&self, other: _Vec2) -> _Vec2 {
         _Vec2 {
             x: self.x + other.x,
             y: self.y + other.y,
         }
     }
-    fn __sub__(self, other: _Vec2) -> _Vec2 {
+    fn __sub__(&self, other: _Vec2) -> _Vec2 {
         _Vec2 {
             x: self.x - other.x,
             y: self.y - other.y,
         }
     }
-    fn __mul__(self, other: _Vec2) -> _Vec2 {
+    fn __mul__(&self, other: _Vec2) -> _Vec2 {
         _Vec2 {
             x: self.x * other.x,
             y: self.y * other.y,
         }
     }
-    fn __truediv__(self, other: _Vec2) -> _Vec2 {
+    fn __truediv__(&self, other: _Vec2) -> _Vec2 {
         _Vec2 {
             x: self.x / other.x,
             y: self.y / other.y,
         }
     }
-    fn length(self) -> f32 {
+    fn length(&self) -> f32 {
         (self.x * self.x + self.y * self.y).sqrt()
     }
-    fn dot(self, other: _Vec2) -> f32 {
+    fn dot(&self, other: _Vec2) -> f32 {
         self.x * other.x + self.y * other.y
     }
-    fn rotated(self, angle: f32) -> _Vec2 {
+    fn rotated(&self, angle: f32) -> _Vec2 {
         let rads = angle.to_radians();
         let cosine = rads.cos();
         let sine = rads.sin();
@@ -218,7 +221,7 @@ impl _Vec2 {
             y: (self.y * cosine) - (self.x * sine),
         }
     }
-    fn __repr__(self) {
+    fn __repr__(&self) {
         format!("Vec2({},{})", self.x, self.y);
     }
 }
