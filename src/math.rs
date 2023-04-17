@@ -147,3 +147,20 @@ pub fn rand_angle_spread_deg(angle: f32, half_angle_spread: f32) -> f32 {
 
     angle + s
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_clamp() {
+        let mut result = clamp(1.2, 1.0, 2.0);
+        assert!(result == 1.2);
+
+        result = clamp(2.5, 1.0, 2.0);
+        assert!(result == 2.0);
+
+        result = clamp(0.8, 1.0, 2.0);
+        assert!(result == 1.0);
+    }
+}
