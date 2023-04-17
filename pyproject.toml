@@ -11,6 +11,12 @@ classifiers = [
     "Programming Language :: Python :: Implementation :: PyPy",
 ]
 
+[project.optional-dependencies]
+dev = [
+    "ruff",
+    "black",
+]
+
 [tool.maturin]
 python-source = "python"
 features = ["pyo3/extension-module"]

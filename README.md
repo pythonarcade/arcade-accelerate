@@ -1,56 +1,47 @@
 
 # arcade-accelerate
 
-An experimental library for accelerating arcade using rust. The module can
-be imported and monkey patch arcade replacing functions and types with rust
-versions.
+An experimental library for accelerating [Arcade](https://github.com/pythonarcade/arcade) using Rust. The module can
+be imported and monkey patch Arcade, replacing functions and types with rust versions.
 
 ```py
 import arcade_accelerate
 arcade_accelerate.bootstrap()
+
+import arcade
 ```
+
+It is important to run the arcade-accelerate bootstrapping process before importing Arcade, otherwise the monkey-patched versions will not be fully applied.
 
 ## Build / Setup
 
-* Install maturin
-  * `pip install maturin`
-  * (Package crated with 0.14.15)
-* Install the arcade version you are comparing with
-  * Preferably install from source in editable mode
+First create and activate a Python virtual environment, then install maturin:
 
-Install the create as module in the current virtualenv
+```bash
+pip install maturin
+```
+
+Install the crate as module in the current virtual environment using Maturin. Generally
+when working on performance enhancements you will want to use the `--release` flag.
 
 ```sh
-# debug
+# Debug
 maturin develop
-# release
+
+# Release
 maturin develop --release
 ```
 
-Build python package for release
+Then you can install [Arcade](https://github.com/pythonarcade/arcade) into the same virtual environment
+and run any of it's examples. Optimally testing should be done against the `development` branch of Arcade.
+In order to enable `arcade-accelerate` add these two lines anytime before importing `arcade`. It is important that
+the bootstrap is done prior to importing Arcade, otherwise the monkey-patched functions/classes will not fully apply.
 
-```bash
-# wheel
-maturin build -i python --release
-# sdist
-maturin build -i python --release --sdist
+```py
+import arcade_accelerate
+arcade_accelerate.bootstrap()
+
+import arcade
 ```
 
-When performance testing always use the release build.
-
-## Info
-
-This project has a python module and a rust module.
-
-* `arcade_accelerate` - python module
-* `arcade_accelerate_rust` - rust module
-
-The python module just contains some helper functions to bootstrap the
-acceleration.
-
-The `tests` directory contains some performance tests.
-
-# Resources
-
-* [pyo3 user guide](https://pyo3.rs)
-* [maturin user guide](https://www.maturin.rs/)
+If you would like to run Arcade's test suite with arcade-accelerate enabled, you can do so by setting the `ARCADE_PYTEST_USE_RUST` environment variable before running pytest on Arcade. You just need to ensure that both Arcade and arcade-accelerate are installed in the same environment.
