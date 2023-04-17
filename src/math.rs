@@ -148,6 +148,50 @@ pub fn rand_angle_spread_deg(angle: f32, half_angle_spread: f32) -> f32 {
     angle + s
 }
 
+#[pyfunction]
+pub fn rand_vec_degree_spread(angle: f32, half_angle_spread: f32, length: f32) -> Vector {
+    let a = rand_angle_spread_deg(angle,half_angle_spread);
+    let vel = _Vec2::from_polar(a, length);
+    Vector(vel.as_tuple().0,vel.as_tuple().1)
+    
+
+
+}
+#[pyfunction]
+pub fn rand_vec_magnitude( angle:f32, lo_magnitude:f32,hi_magnitude: f32) -> Vector {
+    let mut rng = thread_rng();
+    let mag = rng.gen_range(lo_magnitude..hi_magnitude);
+    let vel = _Vec2::from_polar(angle,mag);
+    Vector(vel.as_tuple().0,vel.as_tuple().1)
+    
+    
+}
+
+
+
+
+// This is only a subset of _Vec2 methods defined in arcade.math.py
+struct _Vec2 {
+    x: f32,
+    y: f32,
+}
+impl _Vec2{
+    fn from_polar(angle: f32, radius: f32) -> _Vec2{
+    let rads = angle.to_radians();
+    _Vec2{x: radius * rads.cos(), y: radius * rads.sin()}
+    }
+
+    fn as_tuple(self) -> (f32,f32){
+        (self.x,self.y)
+    }
+
+
+}
+// Vector and Point usually defined in arcade.types.py, I have temporarily defined them here as some functions require them.
+struct Vector(f32,f32);
+
+struct Point(f32,f32);
+
 #[cfg(test)]
 mod tests {
     use super::*;
