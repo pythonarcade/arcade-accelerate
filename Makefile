@@ -1,7 +1,7 @@
 .PHONY: lint-python
 lint-python:
-	$(ruff) python
-	$(black) --check --diff python
+	ruff python
+	black --check --diff python
 
 .PHONY: lint-rust
 lint-rust:
