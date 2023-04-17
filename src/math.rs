@@ -47,15 +47,14 @@ pub fn lerp_vec(v1: (f32, f32), v2: (f32, f32), u: f32) -> (f32, f32) {
 
 #[pyfunction]
 pub fn lerp_angle(start_angle: f32, end_angle: f32, u: f32) -> f32 {
-    
-    let mut temp_start = start_angle % 360.0;
+    let temp_start = start_angle % 360.0;
     let mut temp_end = end_angle % 360.0;
 
     while temp_start - temp_end > 180.0 {
         temp_end += 360.0;
     }
 
-    while temp_start - temp_end < - 180.0 {
+    while temp_start - temp_end < -180.0 {
         temp_end -= 360.0;
     }
 
@@ -91,8 +90,8 @@ pub fn get_angle_radians(x1: f32, y1: f32, x2: f32, y2: f32) -> f32 {
 pub fn rand_in_rect(bottom_left: (f32, f32), width: f32, height: f32) -> (f32, f32) {
     let mut rng = thread_rng();
 
-    let random_x: f32 = rng.gen_range(bottom_left.0 .. bottom_left.0 + width);
-    let random_y: f32 = rng.gen_range(bottom_left.1 .. bottom_left.1 + height);
+    let random_x: f32 = rng.gen_range(bottom_left.0..bottom_left.0 + width);
+    let random_y: f32 = rng.gen_range(bottom_left.1..bottom_left.1 + height);
 
     (random_x, random_y)
 }
@@ -108,8 +107,7 @@ pub fn rand_in_circle(center: (f32, f32), radius: f32) -> (f32, f32) {
     let random_num: f32 = rng.gen();
     let r = radius * random_num;
 
-    (r * angle.cos() + center.0,
-     r * angle.sin() + center.1)
+    (r * angle.cos() + center.0, r * angle.sin() + center.1)
 }
 
 #[pyfunction]
@@ -120,22 +118,24 @@ pub fn rand_on_circle(center: (f32, f32), radius: f32) -> (f32, f32) {
     let random_num: f32 = rng.gen();
     let angle = 2.0 * pi * random_num;
 
-    (radius * angle.cos() + center.0,
-     radius * angle.sin() + center.1)
+    (
+        radius * angle.cos() + center.0,
+        radius * angle.sin() + center.1,
+    )
 }
 
 #[pyfunction]
 pub fn rand_on_line(pos1: (f32, f32), pos2: (f32, f32)) -> (f32, f32) {
     let mut rng = thread_rng();
-    let u: f32 = rng.gen_range(0.0 .. 1.0);
-    
+    let u: f32 = rng.gen_range(0.0..1.0);
+
     lerp_vec(pos1, pos2, u)
 }
 
 #[pyfunction]
 pub fn rand_angle_360_deg() -> f32 {
     let mut rng = thread_rng();
-    let random_angle: f32 = rng.gen_range(0.0 .. 360.0);
+    let random_angle: f32 = rng.gen_range(0.0..360.0);
 
     random_angle
 }
@@ -143,7 +143,7 @@ pub fn rand_angle_360_deg() -> f32 {
 #[pyfunction]
 pub fn rand_angle_spread_deg(angle: f32, half_angle_spread: f32) -> f32 {
     let mut rng = thread_rng();
-    let s = rng.gen_range(-half_angle_spread .. half_angle_spread);
+    let s = rng.gen_range(-half_angle_spread..half_angle_spread);
 
-    angle + s 
+    angle + s
 }
