@@ -163,4 +163,96 @@ mod tests {
         result = clamp(0.8, 1.0, 2.0);
         assert!(result == 1.0);
     }
+    
+    #[test]
+    fn test_lerp() {
+        let mut result = lerp(2.0, 3.0, 1.0);
+        assert!(result == 3.0);
+
+        result = lerp(0.8, 1.2, 0.0);
+        assert!(result == 0.8);
+
+        result = lerp(2.0, 4.0, 0.5);
+        assert!(result == 3.0);
+    }
+
+    #[test]
+    fn test_lerp_vec() {
+        let mut result = lerp_vec((0.0, 2.0), (8.0, 4.0), 0.25);
+        assert!(result == (2.0, 2.5));
+
+        result = lerp_vec((0.0, 2.0), (8.0, 4.0), -0.25);
+        assert!(result == (-2.0, 1.5));
+    }
+
+    #[test]
+    fn test_lerp_angle_normal() {
+        //normal
+        let mut result = lerp_angle(0.0, 90.0, 0.5);
+        assert!(result == 45.0);
+
+        //backwards
+        result = lerp_angle(90.0, 0.0, 0.5);
+        assert!(result == 45.0)
+    }
+
+    #[test]
+    fn test_lerp_angle_loop_around() {
+        //forward
+        let mut result = lerp_angle(355.0, 15.0, 0.5);
+        assert!(result == 5.0);
+
+        //backward
+        result = lerp_angle(10.0, 350.0, 0.5);
+        assert!(result == 0.0);
+    }
+
+    #[test]
+    fn test_lerp_angle_equal() {
+        let mut result = lerp_angle(50.0, 50.0, 0.5);
+        assert!(result == 50.0);
+
+        //effectively equal
+        result = lerp_angle(50.0, 50.0 + 360.0, 0.5);
+        assert!(result == 50.0);
+
+        result = lerp_angle(50.0 - 360.0, 50.0, 0.5);
+        assert!(result == 50.0);
+    }
+
+    #[test]
+    fn test_get_distance() {
+        let mut result = get_distance(0.0, 0.0, 0.0, 0.0);
+        assert!(result == 0.0);
+
+        result = get_distance(0.0, 0.0, 3.0, 4.0);
+        assert!(result == 5.0);
+    }
+
+    #[test]
+    fn test_get_angle_degrees() {
+        //0 when x_diff = 0, y_diff = 0
+        let mut result = get_angle_degrees(0.0, 0.0, 0.0, 0.0);
+        assert!(result == 0.0);
+        
+        result = get_angle_degrees(0.0, 0.0, 0.0, 3.0);
+        assert!(result == 90.0);
+
+        result = get_angle_degrees(0.0, 0.0, 1.0, 1.0);
+        assert!(result == 45.0);
+    }
+
+    #[test]
+    fn test_get_angle_radians() {
+        let pi = std::f32::consts::PI;
+        //0 when x_diff = 0, y_diff = 0
+        let mut result = get_angle_radians(0.0, 0.0, 0.0, 0.0);
+        assert!(result == 0.0);
+        
+        result = get_angle_radians(0.0, 0.0, 0.0, 3.0);
+        assert!(result == pi / 2.0);
+
+        result = get_angle_radians(0.0, 0.0, 1.0, 1.0);
+        assert!(result == pi / 4.0);
+    }
 }
