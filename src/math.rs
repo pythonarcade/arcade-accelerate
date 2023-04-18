@@ -255,4 +255,61 @@ mod tests {
         result = get_angle_radians(0.0, 0.0, 1.0, 1.0);
         assert!(result == pi / 4.0);
     }
+
+    #[test]
+    fn test_Vec2() {
+        let s = _Vec2 { x: 1.5, y: 2.5 };
+        assert!(s.x == 1.5);
+        assert!(s.y == 2.5);
+    }
+
+    #[test]
+    fn test_from_polar_in_Vec2() {
+        let mut result = _Vec2::from_polar(0.0, 1.0);
+        let mut s = (result.x, result.y);
+        assert!(s == (1.0, 0.0));
+
+        result = _Vec2::from_polar(90.0, 1.0);
+        s = (result.x, result.y);
+        assert!(s == (0.0, 1.0));
+
+        result = _Vec2::from_polar(45.0, 2.0);
+        s = (result.x, result.y);
+        assert!(s == (2.0f32.sqrt(), 2.0f32.sqrt()));
+    }
+
+    #[test]
+    fn test_length_in_Vec2() {
+        let mut s = _Vec2 { x: 3, y: 4 };
+        let mut result = s.length();
+        assert!(result == 5.0);
+
+        s = _Vec2 { x: 0.0, y: 0.0 };
+        result = s.length();
+        assert!(result == 0.0);
+    }
+
+    #[test]
+    fn test_dot_in_Vec2() {
+        let s = _Vec2 { x: 1.0, y: 1.0 };
+        let result = s.dot((2.0, 3.0));
+        assert!(result == 5.0);
+    }
+
+    #[test]
+    fn test_rotated_in_Vec2() {
+        let mut s = _Vec2 { x: 1.0, y: 0.0 };
+        let mut result = s.rotated(0.0);
+        assert!(result.x == 1.0);
+        assert!(result.y == 0.0);
+
+        result = s.rotated(90.0);
+        assert!(result.x == 0.0);
+        assert!(result.y == 1.0);
+
+        s = _Vec2 { x: 0.0, y: 0.0 };
+        result = s.rotated(25.0);
+        assert!(result.x == 0.0);
+        assert!(result.y == 0.0);
+    }
 }
