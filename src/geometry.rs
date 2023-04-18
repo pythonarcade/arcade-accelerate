@@ -54,3 +54,8 @@ pub fn are_polygons_intersecting(poly_a: Vec<(f32, f32)>, poly_b: Vec<(f32, f32)
     }
     true
 }
+
+#[pyfunction]
+pub fn is_point_in_box(p: (f32, f32), q: (f32, f32), r: (f32, f32)) -> bool {
+    (q.0 <= p.0.max(r.0)) && (q.0 >= p.0.min(r.0)) && (q.1 <= p.1.max(r.1)) && (q.1 >= p.1.min(r.1))
+}
