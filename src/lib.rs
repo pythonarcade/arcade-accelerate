@@ -6,8 +6,9 @@ pub use hitbox::{HitBox, RotatableHitBox};
 mod math;
 
 mod geometry;
-pub use geometry::are_polygons_intersecting;
-pub use geometry::is_point_in_box;
+pub use geometry::{
+    are_lines_intersecting, are_polygons_intersecting, get_triangle_orientation, is_point_in_box,
+};
 
 mod sprite_list;
 pub use sprite_list::{check_for_collision_with_list, check_for_collision_with_lists};
@@ -36,6 +37,5 @@ fn arcade_accelerate(_py: Python, m: &PyModule) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(are_polygons_intersecting, m)?)?;
     m.add_function(wrap_pyfunction!(check_for_collision_with_list, m)?)?;
     m.add_function(wrap_pyfunction!(check_for_collision_with_lists, m)?)?;
-    m.add_function(wrap_pyfunction!(is_point_in_box, m)?)?;
     Ok(())
 }
