@@ -6,7 +6,9 @@ pub use hitbox::{HitBox, RotatableHitBox};
 mod math;
 
 mod geometry;
-pub use geometry::are_polygons_intersecting;
+pub use geometry::{
+    are_lines_intersecting, are_polygons_intersecting, get_triangle_orientation, is_point_in_box,
+};
 
 mod sprite_list;
 pub use sprite_list::{check_for_collision_with_list, check_for_collision_with_lists};
