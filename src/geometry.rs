@@ -101,7 +101,8 @@ mod tests {
     #[test]
     fn test_are_polygons_intersecting() {
         let mut poly_a: Vec<(f32, f32)> = vec![(0.0, 0.0), (0.0, 50.0), (50.0, 50.0), (50.0, 0.0)];
-        let mut poly_b: Vec<(f32, f32)> = vec![(25.0, 25.0), (25.0, 75.0), (75.0, 75.0), (75.0, 25.0)];
+        let mut poly_b: Vec<(f32, f32)> =
+            vec![(25.0, 25.0), (25.0, 75.0), (75.0, 75.0), (75.0, 25.0)];
         let mut result = are_polygons_intersecting(poly_a, poly_b);
         assert!(result == true);
 
@@ -116,7 +117,7 @@ mod tests {
         // point insde
         let mut result = is_point_in_box((0.0, 0.0), (50.0, 50.0), (100.0, 100.0));
         assert!(result == true);
-        
+
         //point outside
         result = is_point_in_box((0.0, 0.0), (-1.0, -1.0), (100.0, 100.0));
         assert!(result == false);
