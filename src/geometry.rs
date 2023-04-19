@@ -95,6 +95,7 @@ pub fn are_lines_intersecting(
     || ((o4 == 0) && is_point_in_box(p2, q1, q2))
 }
 
+#[cfg(test)]
 mod tests {
     use super::*;
 
