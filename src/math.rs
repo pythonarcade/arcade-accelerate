@@ -335,14 +335,14 @@ mod tests {
     }
 
     #[test]
-    fn test_Vec2() {
+    fn test_vec2() {
         let s = _Vec2 { x: 1.5, y: 2.5 };
         assert!(s.x == 1.5);
         assert!(s.y == 2.5);
     }
 
     #[test]
-    fn test_from_polar_in_Vec2() {
+    fn test_from_polar_in_vec2() {
         let mut result = _Vec2::from_polar(0.0, 1.0);
         let mut s = (result.x, result.y);
         assert!(s == (1.0, 0.0));
@@ -357,8 +357,8 @@ mod tests {
     }
 
     #[test]
-    fn test_length_in_Vec2() {
-        let mut s = _Vec2 { x: 3, y: 4 };
+    fn test_length_in_vec2() {
+        let mut s = _Vec2 { x: 3.0, y: 4.0 };
         let mut result = s.length();
         assert!(result == 5.0);
 
@@ -368,14 +368,14 @@ mod tests {
     }
 
     #[test]
-    fn test_dot_in_Vec2() {
+    fn test_dot_in_vec2() {
         let s = _Vec2 { x: 1.0, y: 1.0 };
-        let result = s.dot((2.0, 3.0));
+        let result = s.dot(_Vec2 { x: 2.0, y: 3.0 });
         assert!(result == 5.0);
     }
 
     #[test]
-    fn test_rotated_in_Vec2() {
+    fn test_rotated_in_vec2() {
         let mut s = _Vec2 { x: 1.0, y: 0.0 };
         let mut result = s.rotated(0.0);
         assert!(result.x == 1.0);
