@@ -94,3 +94,61 @@ pub fn are_lines_intersecting(
     // p2, q2 and q1 are collinear and q1 lies on segment p2q2
     || ((o4 == 0) && is_point_in_box(p2, q1, q2))
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_are_polygons_intersecting() {
+        let mut poly_a: Vec<(f32, f32)> = vec![(0.0, 0.0), (0.0, 50.0), (50.0, 50.0), (50.0, 0.0)];
+        let mut poly_b: Vec<(f32, f32)> =
+            vec![(25.0, 25.0), (25.0, 75.0), (75.0, 75.0), (75.0, 25.0)];
+        let mut result = are_polygons_intersecting(poly_a, poly_b);
+        assert!(result == true);
+
+        poly_a = vec![(0.0, 0.0), (1.0, 0.0), (1.0, 1.0), (0.0, 1.0)];
+        poly_b = vec![(5.0, 5.0), (6.0, 5.0), (6.0, 6.0), (5.0, 6.0)];
+        result = are_polygons_intersecting(poly_a, poly_b);
+        assert!(result == false);
+    }
+
+    #[test]
+    fn test_is_point_in_box() {
+        // point insde
+        let mut result = is_point_in_box((0.0, 0.0), (50.0, 50.0), (100.0, 100.0));
+        assert!(result == true);
+
+        //point outside
+        result = is_point_in_box((0.0, 0.0), (-1.0, -1.0), (100.0, 100.0));
+        assert!(result == false);
+    }
+
+    #[test]
+    fn test_get_triangle_orientation() {
+        // collinear
+        let mut result = get_triangle_orientation((0.0, 0.0), (0.0, 1.0), (0.0, 2.0));
+        assert!(result == 0);
+
+        // clockwise
+        result = get_triangle_orientation((0.0, 0.0), (0.0, 1.0), (1.0, 1.0));
+        assert!(result == 1);
+
+        // anticlockwise
+        result = get_triangle_orientation((1.0, 1.0), (0.0, 1.0), (0.0, 0.0));
+        assert!(result == 2);
+    }
+
+    #[test]
+    fn test_are_lines_intersecting() {
+        let mut result = are_lines_intersecting((0.0, 0.0), (1.0, 1.0), (0.0, 0.0), (1.0, 1.0));
+        assert!(result == true);
+
+        result = are_lines_intersecting((0.0, 0.0), (1.0, 1.0), (0.0, 1.0), (0.0, 1.0));
+        assert!(result == true);
+
+        // parallel lines
+        result = are_lines_intersecting((0.0, 0.0), (0.0, 1.0), (1.0, 0.0), (1.0, 1.0));
+        assert!(result == false);
+    }
+}
