@@ -219,8 +219,8 @@ impl _Vec2 {
         let cosine = rads.cos();
         let sine = rads.sin();
         _Vec2 {
-            x: (self.x * cosine) - (self.y - sine),
-            y: (self.y * cosine) - (self.x * sine),
+            x: (self.x * cosine) - (self.y * sine),
+            y: (self.y * cosine) + (self.x * sine),
         }
     }
     fn __repr__(&self) {
@@ -384,8 +384,8 @@ mod tests {
         assert_eq!(result.y, 0.0);
 
         result = s.rotated(90.0);
-        assert_eq!(result.x, 0.0);
-        assert_eq!(result.y, 1.0);
+        assert_float_eq!(result.x, 0.0, abs <= 1.0e-3);
+        assert_float_eq!(result.y, 1.0, abs <= 1.0e-3);
 
         s = _Vec2 { x: 0.0, y: 0.0 };
         result = s.rotated(25.0);
