@@ -1,5 +1,6 @@
 use pyo3::prelude::*;
 use rand::{thread_rng, Rng};
+use float_eq::assert_float_eq;
 
 static _PRECISION: u32 = 2;
 
@@ -349,11 +350,13 @@ mod tests {
 
         result = _Vec2::from_polar(90.0, 1.0);
         s = (result.x, result.y);
-        assert_eq!(s, (0.0, 1.0));
+        assert_float_eq!(result.x, 0.0, abs <= 1.0e-3);
+        assert_float_eq!(result.y, 1.0, abs <= 1.0e-3);
 
         result = _Vec2::from_polar(45.0, 2.0);
         s = (result.x, result.y);
-        assert_eq!(s, (2.0f32.sqrt(), 2.0f32.sqrt()));
+        assert_float_eq!(result.x, 2.0f32.sqrt(), abs <= 1.0e-3);
+        assert_float_eq!(result.y, 2.0f32.sqrt(), abs <= 1.0e-3);
     }
 
     #[test]
