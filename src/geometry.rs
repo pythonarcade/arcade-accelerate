@@ -150,7 +150,7 @@ pub fn is_point_in_polygon(x: f32, y: f32, polygon: Vec<(f32, f32)>) -> bool {
     count -= decrease;
 
     // Return true if count is odd, false otherwise
-    return count % 2 == 1;
+    count % 2 == 1
 }
 
 #[cfg(test)]
