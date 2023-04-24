@@ -33,7 +33,14 @@ maturin develop --release
 ```
 
 Then you can install [Arcade](https://github.com/pythonarcade/arcade) into the same virtual environment
-and run any of it's examples. Optimally testing should be done against the `development` branch of Arcade.
+and run any of it's examples:
+
+```sh
+cd <directory of arcade project>
+pip install -e .
+```
+
+Optimally testing should be done against the `development` branch of Arcade.
 In order to enable `arcade-accelerate` add these two lines anytime before importing `arcade`. It is important that
 the bootstrap is done prior to importing Arcade, otherwise the monkey-patched functions/classes will not fully apply.
 
