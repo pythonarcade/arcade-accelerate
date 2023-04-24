@@ -183,17 +183,21 @@ mod tests {
     }
 
     #[test]
-    fn test_get_triangle_orientation() {
+    fn test_get_triangle_orientation_colinear() {
         // collinear
-        let mut result = get_triangle_orientation((0.0, 0.0), (0.0, 1.0), (0.0, 2.0));
+        let result = get_triangle_orientation((0.0, 0.0), (0.0, 1.0), (0.0, 2.0));
         assert_eq!(result, 0);
+    }
 
-        // clockwise
-        result = get_triangle_orientation((0.0, 0.0), (0.0, 1.0), (1.0, 1.0));
+    #[test]
+    fn test_get_triangle_orientation_clockwise() {
+        let result = get_triangle_orientation((0.0, 0.0), (0.0, 1.0), (1.0, 1.0));
         assert_eq!(result, 1);
+    }
 
-        // anticlockwise
-        result = get_triangle_orientation((1.0, 1.0), (0.0, 1.0), (0.0, 0.0));
+    #[test]
+    fn test_get_triangle_orientation_counterclockwise() {
+        let result = get_triangle_orientation((1.0, 1.0), (0.0, 1.0), (0.0, 0.0));
         assert_eq!(result, 2);
     }
 
