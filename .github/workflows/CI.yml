@@ -47,6 +47,8 @@ jobs:
 
       - run: make lint
 
+      - run: make test
+
   build:
     runs-on: ubuntu-latest
     if: "!startsWith(github.ref, 'refs/tags/')"

@@ -9,5 +9,6 @@ name = "arcade_accelerate"
 crate-type = ["cdylib"]
 
 [dependencies]
+float_eq = "1"
 pyo3 = "0.18.1"
 rand = "0.8.5"

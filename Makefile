@@ -12,3 +12,7 @@ lint-rust:
 
 .PHONY: lint
 lint: lint-python lint-rust
+
+.PHONY: test
+test:
+	cargo test

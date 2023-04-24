@@ -81,7 +81,7 @@ pub fn are_lines_intersecting(
 ) -> bool {
     let o1 = get_triangle_orientation(p1, q1, p2);
     let o2 = get_triangle_orientation(p1, q1, q2);
-    let o3 = get_triangle_orientation(p1, q1, q2);
+    let o3 = get_triangle_orientation(p2, q2, p1);
     let o4 = get_triangle_orientation(p2, q2, q1);
     // General case
     ((o1 != o2) && (o3 != o4))
@@ -163,51 +163,60 @@ mod tests {
         let mut poly_b: Vec<(f32, f32)> =
             vec![(25.0, 25.0), (25.0, 75.0), (75.0, 75.0), (75.0, 25.0)];
         let mut result = are_polygons_intersecting(poly_a, poly_b);
-        assert!(result == true);
+        assert!(result);
 
         poly_a = vec![(0.0, 0.0), (1.0, 0.0), (1.0, 1.0), (0.0, 1.0)];
         poly_b = vec![(5.0, 5.0), (6.0, 5.0), (6.0, 6.0), (5.0, 6.0)];
         result = are_polygons_intersecting(poly_a, poly_b);
-        assert!(result == false);
+        assert!(!result);
     }
 
     #[test]
     fn test_is_point_in_box() {
-        // point insde
+        // point inside
         let mut result = is_point_in_box((0.0, 0.0), (50.0, 50.0), (100.0, 100.0));
-        assert!(result == true);
+        assert!(result);
 
         //point outside
         result = is_point_in_box((0.0, 0.0), (-1.0, -1.0), (100.0, 100.0));
-        assert!(result == false);
+        assert!(!result);
     }
 
     #[test]
-    fn test_get_triangle_orientation() {
+    fn test_get_triangle_orientation_colinear() {
         // collinear
-        let mut result = get_triangle_orientation((0.0, 0.0), (0.0, 1.0), (0.0, 2.0));
-        assert!(result == 0);
+        let result = get_triangle_orientation((0.0, 0.0), (0.0, 1.0), (0.0, 2.0));
+        assert_eq!(result, 0);
+    }
 
-        // clockwise
-        result = get_triangle_orientation((0.0, 0.0), (0.0, 1.0), (1.0, 1.0));
-        assert!(result == 1);
+    #[test]
+    fn test_get_triangle_orientation_clockwise() {
+        let result = get_triangle_orientation((0.0, 0.0), (0.0, 1.0), (1.0, 1.0));
+        assert_eq!(result, 1);
+    }
 
-        // anticlockwise
-        result = get_triangle_orientation((1.0, 1.0), (0.0, 1.0), (0.0, 0.0));
-        assert!(result == 2);
+    #[test]
+    fn test_get_triangle_orientation_counterclockwise() {
+        let result = get_triangle_orientation((1.0, 1.0), (0.0, 1.0), (0.0, 0.0));
+        assert_eq!(result, 2);
+    }
+
+    #[test]
+    fn test_are_lines_intersecting_colinear() {
+        let result = are_lines_intersecting((0.0, 0.0), (1.0, 1.0), (0.0, 0.0), (1.0, 1.0));
+        assert!(result);
     }
 
     #[test]
     fn test_are_lines_intersecting() {
-        let mut result = are_lines_intersecting((0.0, 0.0), (1.0, 1.0), (0.0, 0.0), (1.0, 1.0));
-        assert!(result == true);
+        let result = are_lines_intersecting((0.0, 0.0), (1.0, 1.0), (0.0, 1.0), (1.0, 0.0));
+        assert!(result);
+    }
 
-        result = are_lines_intersecting((0.0, 0.0), (1.0, 1.0), (0.0, 1.0), (0.0, 1.0));
-        assert!(result == true);
-
-        // parallel lines
-        result = are_lines_intersecting((0.0, 0.0), (0.0, 1.0), (1.0, 0.0), (1.0, 1.0));
-        assert!(result == false);
+    #[test]
+    fn test_are_lines_intersecting_parallel() {
+        let result = are_lines_intersecting((0.0, 0.0), (0.0, 1.0), (1.0, 0.0), (1.0, 1.0));
+        assert!(!result);
     }
 
     #[test]
