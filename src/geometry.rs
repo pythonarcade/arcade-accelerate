@@ -81,7 +81,7 @@ pub fn are_lines_intersecting(
 ) -> bool {
     let o1 = get_triangle_orientation(p1, q1, p2);
     let o2 = get_triangle_orientation(p1, q1, q2);
-    let o3 = get_triangle_orientation(p1, q1, q2);
+    let o3 = get_triangle_orientation(p2, q2, p1);
     let o4 = get_triangle_orientation(p2, q2, q1);
     // General case
     ((o1 != o2) && (o3 != o4))
