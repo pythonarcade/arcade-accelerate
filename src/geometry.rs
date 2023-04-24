@@ -198,15 +198,20 @@ mod tests {
     }
 
     #[test]
+    fn test_are_lines_intersecting_colinear() {
+        let result = are_lines_intersecting((0.0, 0.0), (1.0, 1.0), (0.0, 0.0), (1.0, 1.0));
+        assert!(result);
+    }
+
+    #[test]
     fn test_are_lines_intersecting() {
-        let mut result = are_lines_intersecting((0.0, 0.0), (1.0, 1.0), (0.0, 0.0), (1.0, 1.0));
+        let result = are_lines_intersecting((0.0, 0.0), (1.0, 1.0), (0.0, 1.0), (0.0, 1.0));
         assert!(result);
+    }
 
-        result = are_lines_intersecting((0.0, 0.0), (1.0, 1.0), (0.0, 1.0), (0.0, 1.0));
-        assert!(result);
-
-        // parallel lines
-        result = are_lines_intersecting((0.0, 0.0), (0.0, 1.0), (1.0, 0.0), (1.0, 1.0));
+    #[test]
+    fn test_are_lines_intersecting_parallel() {
+        let result = are_lines_intersecting((0.0, 0.0), (0.0, 1.0), (1.0, 0.0), (1.0, 1.0));
         assert!(!result);
     }
 
