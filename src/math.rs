@@ -346,16 +346,14 @@ mod tests {
     #[test]
     fn test_from_polar_in_vec2() {
         let mut result = _Vec2::from_polar(0.0, 1.0);
-        let mut s = (result.x, result.y);
+        let s = (result.x, result.y);
         assert_eq!(s, (1.0, 0.0));
 
         result = _Vec2::from_polar(90.0, 1.0);
-        s = (result.x, result.y);
         assert_float_eq!(result.x, 0.0, abs <= 1.0e-3);
         assert_float_eq!(result.y, 1.0, abs <= 1.0e-3);
 
         result = _Vec2::from_polar(45.0, 2.0);
-        s = (result.x, result.y);
         assert_float_eq!(result.x, 2.0f32.sqrt(), abs <= 1.0e-3);
         assert_float_eq!(result.y, 2.0f32.sqrt(), abs <= 1.0e-3);
     }
