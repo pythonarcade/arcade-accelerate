@@ -95,6 +95,11 @@ pub fn are_lines_intersecting(
     || ((o4 == 0) && is_point_in_box(p2, q1, q2))
 }
 
+#[pyfunction]
+pub fn is_point_in_polygon() {
+
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
