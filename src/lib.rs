@@ -7,7 +7,7 @@ mod math;
 
 mod geometry;
 pub use geometry::{
-    are_lines_intersecting, are_polygons_intersecting, get_triangle_orientation, is_point_in_box,
+    are_lines_intersecting, are_polygons_intersecting, get_triangle_orientation, is_point_in_box, is_point_in_polygon
 };
 
 mod sprite_list;
@@ -37,5 +37,6 @@ fn arcade_accelerate(_py: Python, m: &PyModule) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(are_polygons_intersecting, m)?)?;
     m.add_function(wrap_pyfunction!(check_for_collision_with_list, m)?)?;
     m.add_function(wrap_pyfunction!(check_for_collision_with_lists, m)?)?;
+    m.add_function(wrap_pyfunction!(is_point_in_polygon, m)?)?;
     Ok(())
 }
