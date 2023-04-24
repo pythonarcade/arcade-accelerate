@@ -132,11 +132,7 @@ pub fn is_point_in_polygon(x: f32, y: f32, polygon: Vec<(f32, f32)>) -> bool {
             // segment 'i-next', then check if it lies
             // on segment. If it lies, return true, otherwise false
             if get_triangle_orientation(polygon[i], p, polygon[next_item]) == 0 {
-                return !is_point_in_box(
-                    polygon[i],
-                    p,
-                    polygon[next_item],
-                );
+                return !is_point_in_box(polygon[i], p, polygon[next_item]);
             }
 
             count += 1
@@ -145,7 +141,7 @@ pub fn is_point_in_polygon(x: f32, y: f32, polygon: Vec<(f32, f32)>) -> bool {
         i = next_item;
 
         if i == 0 {
-            break
+            break;
         }
     }
 
@@ -154,7 +150,7 @@ pub fn is_point_in_polygon(x: f32, y: f32, polygon: Vec<(f32, f32)>) -> bool {
     count -= decrease;
 
     // Return true if count is odd, false otherwise
-    return count % 2 == 1
+    return count % 2 == 1;
 }
 
 #[cfg(test)]
@@ -216,24 +212,14 @@ mod tests {
 
     #[test]
     fn test_point_in_rectangle() {
-        let polygon = vec![
-            (0.0, 0.0),
-            (0.0, 50.0),
-            (50.0, 50.0),
-            (50.0, 0.0),
-        ];
+        let polygon = vec![(0.0, 0.0), (0.0, 50.0), (50.0, 50.0), (50.0, 0.0)];
         let result = is_point_in_polygon(25.0, 25.0, polygon);
         assert!(result);
     }
 
     #[test]
     fn test_point_not_in_rectangle() {
-        let polygon = vec![
-            (0.0, 0.0),
-            (0.0, 50.0),
-            (50.0, 50.0),
-            (50.0, 0.0),
-        ];
+        let polygon = vec![(0.0, 0.0), (0.0, 50.0), (50.0, 50.0), (50.0, 0.0)];
         let result = is_point_in_polygon(100.0, 100.0, polygon);
         assert!(!result);
     }
