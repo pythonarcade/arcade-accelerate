@@ -173,7 +173,7 @@ mod tests {
 
     #[test]
     fn test_is_point_in_box() {
-        // point insde
+        // point inside
         let mut result = is_point_in_box((0.0, 0.0), (50.0, 50.0), (100.0, 100.0));
         assert!(result);
 
