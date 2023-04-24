@@ -95,6 +95,64 @@ pub fn are_lines_intersecting(
     || ((o4 == 0) && is_point_in_box(p2, q1, q2))
 }
 
+#[pyfunction]
+pub fn is_point_in_polygon(x: f32, y: f32, polygon: Vec<(f32, f32)>) -> bool {
+    let p = (x, y);
+    let n = polygon.len();
+
+    // There must be at least 3 vertices
+    // in polygon
+    if n < 3 {
+        return false;
+    }
+
+    // Create a point for line segment
+    // from p to infinite
+    let extreme = (10000.0, p.1);
+
+    // To count number of points in polygon
+    // whose y-coordinate is equal to
+    // y-coordinate of the point
+    let mut decrease = 0;
+    let mut count = 0;
+    let mut i = 0;
+
+    loop {
+        let next_item = (i + 1) % n;
+
+        if polygon[i].1 == p.1 {
+            decrease += 1;
+        }
+
+        // Check if the line segment from 'p' to
+        // 'extreme' intersects with the line
+        // segment from 'polygon[i]' to 'polygon[next]'
+        if are_lines_intersecting(polygon[i], polygon[next_item], p, extreme) {
+            // If the point 'p' is collinear with line
+            // segment 'i-next', then check if it lies
+            // on segment. If it lies, return true, otherwise false
+            if get_triangle_orientation(polygon[i], p, polygon[next_item]) == 0 {
+                return !is_point_in_box(polygon[i], p, polygon[next_item]);
+            }
+
+            count += 1
+        }
+
+        i = next_item;
+
+        if i == 0 {
+            break;
+        }
+    }
+
+    // Reduce the count by decrease amount
+    // as these points would have been added twice
+    count -= decrease;
+
+    // Return true if count is odd, false otherwise
+    count % 2 == 1
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -150,5 +208,26 @@ mod tests {
         // parallel lines
         result = are_lines_intersecting((0.0, 0.0), (0.0, 1.0), (1.0, 0.0), (1.0, 1.0));
         assert!(result == false);
+    }
+
+    #[test]
+    fn test_point_in_rectangle() {
+        let polygon = vec![(0.0, 0.0), (0.0, 50.0), (50.0, 50.0), (50.0, 0.0)];
+        let result = is_point_in_polygon(25.0, 25.0, polygon);
+        assert!(result);
+    }
+
+    #[test]
+    fn test_point_not_in_rectangle() {
+        let polygon = vec![(0.0, 0.0), (0.0, 50.0), (50.0, 50.0), (50.0, 0.0)];
+        let result = is_point_in_polygon(100.0, 100.0, polygon);
+        assert!(!result);
+    }
+
+    #[test]
+    fn test_point_not_in_empty_polygon() {
+        let polygon = vec![];
+        let result = is_point_in_polygon(25.0, 25.0, polygon);
+        assert!(!result);
     }
 }
