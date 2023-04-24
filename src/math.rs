@@ -1,6 +1,6 @@
+use float_eq::assert_float_eq;
 use pyo3::prelude::*;
 use rand::{thread_rng, Rng};
-use float_eq::assert_float_eq;
 
 static _PRECISION: u32 = 2;
 
