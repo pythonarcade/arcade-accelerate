@@ -186,15 +186,15 @@ mod tests {
     fn test_get_triangle_orientation() {
         // collinear
         let mut result = get_triangle_orientation((0.0, 0.0), (0.0, 1.0), (0.0, 2.0));
-        assert!(result == 0);
+        assert_eq!(result, 0);
 
         // clockwise
         result = get_triangle_orientation((0.0, 0.0), (0.0, 1.0), (1.0, 1.0));
-        assert!(result == 1);
+        assert_eq!(result, 1);
 
         // anticlockwise
         result = get_triangle_orientation((1.0, 1.0), (0.0, 1.0), (0.0, 0.0));
-        assert!(result == 2);
+        assert_eq!(result, 2);
     }
 
     #[test]
