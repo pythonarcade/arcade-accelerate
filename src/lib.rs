@@ -7,7 +7,8 @@ mod math;
 
 mod geometry;
 pub use geometry::{
-    are_lines_intersecting, are_polygons_intersecting, get_triangle_orientation, is_point_in_box, is_point_in_polygon
+    are_lines_intersecting, are_polygons_intersecting, get_triangle_orientation, is_point_in_box,
+    is_point_in_polygon,
 };
 
 mod sprite_list;
