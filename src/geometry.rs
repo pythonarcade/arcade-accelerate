@@ -117,7 +117,7 @@ pub fn is_point_in_polygon(x: f32, y: f32, polygon: Vec<(f32, f32)>) -> bool {
     let mut count = 0;
     let mut i = 0;
 
-    while true {
+    loop {
         let next_item = (i + 1) % n;
 
         if polygon[i].1 == p.1 {
