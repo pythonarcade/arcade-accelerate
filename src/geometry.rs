@@ -209,7 +209,7 @@ mod tests {
 
     #[test]
     fn test_are_lines_intersecting() {
-        let result = are_lines_intersecting((0.0, 0.0), (1.0, 1.0), (0.0, 1.0), (0.0, 1.0));
+        let result = are_lines_intersecting((0.0, 0.0), (1.0, 1.0), (0.0, 1.0), (1.0, 0.0));
         assert!(result);
     }
 
