@@ -59,7 +59,8 @@ pub fn lerp_angle(start_angle: f32, end_angle: f32, u: f32) -> f32 {
         temp_end -= 360.0;
     }
 
-    lerp(temp_start, temp_end, u) % 360.0
+    // Add 360
+    lerp(temp_start, temp_end, u).rem_euclid(360.0)
 }
 
 #[pyfunction]
