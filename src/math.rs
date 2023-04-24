@@ -1,4 +1,3 @@
-use float_eq::assert_float_eq;
 use pyo3::prelude::*;
 use rand::{thread_rng, Rng};
 
@@ -231,6 +230,7 @@ impl _Vec2 {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use float_eq::assert_float_eq;
 
     #[test]
     fn test_clamp() {
