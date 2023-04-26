@@ -15,6 +15,7 @@ pub struct BasicSprite {
     hitbox: HitBox,
     color: (u8, u8, u8, u8),
     sprite_lists: Vec<PyObject>,
+    angle: f32,
 }
 
 impl IntoPy<Py<PyTuple>> for BasicSprite {
@@ -68,8 +69,10 @@ impl BasicSprite {
                 points,
                 position: final_position,
                 scale: final_scale,
+                angle: 0.0,
             },
             sprite_lists: Vec::new(),
+            angle: 0.0,
         }
     }
 
@@ -414,6 +417,80 @@ impl BasicSprite {
         }
 
         self.sprite_lists.clear();
+
+        Ok(())
+    }
+
+    fn update(&self) {}
+}
+
+#[derive(FromPyObject)]
+enum PathOrTexture {
+    First(String),
+    Second(PyObject),
+}
+
+#[pyclass(subclass, extends=BasicSprite, module="arcade.sprite.sprite")]
+pub struct Sprite {}
+
+#[pymethods]
+impl Sprite {
+    #[new]
+    #[pyo3(signature = (path_or_texture, scale=1.0, center_x=0.0, center_y=0.0, angle=0.0, **_kwargs))]
+    fn new(
+        py: Python<'_>,
+        path_or_texture: PathOrTexture,
+        scale: Option<f32>,
+        center_x: Option<f32>,
+        center_y: Option<f32>,
+        angle: Option<f32>,
+        _kwargs: Option<&PyDict>,
+    ) -> (Self, BasicSprite) {
+        let texture: PyObject = match path_or_texture {
+            PathOrTexture::First(path_string) => {
+                let arcade = PyModule::import(py, "arcade").expect("Failed to import arcade");
+                arcade
+                    .getattr("load_texture")
+                    .expect("No arcade.load_texture function found")
+                    .call1(PyTuple::new(py, vec![path_string]))
+                    .expect("Failed to execute arcade.load_texture")
+                    .extract()
+                    .expect("Failed to extract PyObject from arcade.load_texture")
+            }
+            PathOrTexture::Second(object) => {
+                let cls: &str = object.clone().into_ref(py).get_type().name().unwrap();
+                let final_object: PyObject = match cls {
+                    "Texture" => object,
+                    "Path" => panic!("Handle pathlib here"),
+                    _ => panic!("Unknown Type Passed to sprite constructor"),
+                };
+                final_object
+            }
+        };
+        let mut basic = BasicSprite::new(py, texture, scale, center_x, center_y, _kwargs);
+        basic.angle = angle.unwrap_or(0.0);
+        (Self {}, basic)
+    }
+
+    #[getter]
+    fn get_angle(self_: PyRef<'_, Self>) -> PyResult<f32> {
+        Ok(self_.into_super().angle)
+    }
+
+    #[setter]
+    fn set_angle(mut self_: PyRefMut<'_, Self>, py: Python<'_>, new_value: f32) -> PyResult<()> {
+        let super_ = self_.as_mut();
+
+        if super_.angle == new_value {
+            return Ok(());
+        }
+
+        super_.angle = new_value;
+        super_.hitbox.angle = new_value;
+
+        for sprite_list in super_.sprite_lists.iter() {
+            sprite_list.call_method1(py, "_update_height", super_.clone())?;
+        }
 
         Ok(())
     }
