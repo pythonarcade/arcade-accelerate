@@ -53,8 +53,8 @@ impl BasicSprite {
             .unwrap()
             .extract(py)
             .expect("Failed to Load Height From Texture");
-        width = width * final_scale.0;
-        height = height * final_scale.1;
+        width *= final_scale.0;
+        height *= final_scale.1;
 
         BasicSprite {
             texture,
@@ -205,12 +205,11 @@ impl BasicSprite {
 
     #[setter]
     fn set_color(&mut self, py: Python<'_>, new_value: Vec<u8>) -> PyResult<()> {
-        let new_color: (u8, u8, u8, u8);
-        match new_value.len() {
-            4 => new_color = (new_value[0], new_value[1], new_value[2], new_value[3]),
-            3 => new_color = (new_value[0], new_value[1], new_value[2], self.color.3),
+        let new_color: (u8, u8, u8, u8) = match new_value.len() {
+            4 => (new_value[0], new_value[1], new_value[2], new_value[3]),
+            3 => (new_value[0], new_value[1], new_value[2], self.color.3),
             _ => panic!("Color must be 3 or 4 ints from 0-255"),
-        }
+        };
 
         if new_color == self.color {
             return Ok(());
@@ -410,7 +409,7 @@ impl BasicSprite {
     }
 
     fn remove_from_sprite_lists(&mut self, py: Python<'_>) -> PyResult<()> {
-        while self.sprite_lists.len() > 0 {
+        while !self.sprite_lists.is_empty() {
             self.sprite_lists[0].call_method1(py, "remove", self.clone())?;
         }
 
