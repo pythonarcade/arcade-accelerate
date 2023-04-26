@@ -465,7 +465,6 @@ impl Sprite {
                 };
                 final_object
             }
-            _ => panic!("Failed to create texture"),
         };
         let mut basic = BasicSprite::new(py, texture, scale, center_x, center_y, _kwargs);
         basic.angle = angle.unwrap_or(0.0);
