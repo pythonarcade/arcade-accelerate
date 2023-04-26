@@ -69,6 +69,7 @@ impl BasicSprite {
                 points,
                 position: final_position,
                 scale: final_scale,
+                angle: 0.0,
             },
             sprite_lists: Vec::new(),
             angle: 0.0,
@@ -469,5 +470,28 @@ impl Sprite {
         let mut basic = BasicSprite::new(py, texture, scale, center_x, center_y, _kwargs);
         basic.angle = angle.unwrap_or(0.0);
         (Self {}, basic)
+    }
+
+    #[getter]
+    fn get_angle(self_: PyRef<'_, Self>) -> PyResult<f32> {
+        Ok(self_.into_super().angle)
+    }
+
+    #[setter]
+    fn set_angle(mut self_: PyRefMut<'_, Self>, py: Python<'_>, new_value: f32) -> PyResult<()> {
+        let super_ = self_.as_mut();
+
+        if super_.angle == new_value {
+            return Ok(());
+        }
+
+        super_.angle = new_value;
+        super_.hitbox.angle = new_value;
+
+        for sprite_list in super_.sprite_lists.iter() {
+            sprite_list.call_method1(py, "_update_height", super_.clone())?;
+        }
+
+        Ok(())
     }
 }

@@ -9,6 +9,7 @@ pub struct HitBox {
     pub position: (f32, f32),
     #[pyo3(get, set)]
     pub scale: (f32, f32),
+    pub angle: f32,
 }
 
 #[pymethods]
@@ -25,6 +26,7 @@ impl HitBox {
             points,
             position: final_position,
             scale: final_scale,
+            angle: 0.0,
         }
     }
 
