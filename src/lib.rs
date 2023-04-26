@@ -11,6 +11,8 @@ pub use geometry::{
     is_point_in_polygon,
 };
 
+mod sprite;
+
 mod sprite_list;
 pub use sprite_list::{check_for_collision_with_list, check_for_collision_with_lists};
 
