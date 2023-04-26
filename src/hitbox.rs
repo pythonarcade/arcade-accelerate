@@ -88,7 +88,7 @@ impl HitBox {
 }
 
 impl HitBox {
-    pub fn get_adjusted_points_native(self) -> Vec<(f32, f32)> {
+    pub fn get_adjusted_points_native(&self) -> Vec<(f32, f32)> {
         let mut new_points: Vec<(f32, f32)> = Vec::with_capacity(self.points.len());
 
         for point in self.points.iter() {
@@ -98,6 +98,30 @@ impl HitBox {
         }
 
         new_points
+    }
+
+    pub fn left_native(&self) -> f32 {
+        let mut converted: Vec<(f32, f32)> = self.get_adjusted_points_native();
+        converted.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap());
+        converted[0].0
+    }
+
+    pub fn right_native(&self) -> f32 {
+        let mut converted: Vec<(f32, f32)> = self.get_adjusted_points_native();
+        converted.sort_by(|a, b| b.0.partial_cmp(&a.0).unwrap());
+        converted[0].0
+    }
+
+    pub fn bottom_native(&self) -> f32 {
+        let mut converted: Vec<(f32, f32)> = self.get_adjusted_points_native();
+        converted.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap());
+        converted[0].1
+    }
+
+    pub fn top_native(&self) -> f32 {
+        let mut converted: Vec<(f32, f32)> = self.get_adjusted_points_native();
+        converted.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap());
+        converted[0].1
     }
 }
 

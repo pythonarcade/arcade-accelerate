@@ -11,6 +11,9 @@ pub use geometry::{
     is_point_in_polygon,
 };
 
+mod sprite;
+pub use sprite::BasicSprite;
+
 mod sprite_list;
 pub use sprite_list::{check_for_collision_with_list, check_for_collision_with_lists};
 
@@ -19,6 +22,7 @@ pub use sprite_list::{check_for_collision_with_list, check_for_collision_with_li
 fn arcade_accelerate(_py: Python, m: &PyModule) -> PyResult<()> {
     m.add_class::<HitBox>()?;
     m.add_class::<RotatableHitBox>()?;
+    m.add_class::<BasicSprite>()?;
     m.add_function(wrap_pyfunction!(math::rotate_point, m)?)?;
     m.add_function(wrap_pyfunction!(math::clamp, m)?)?;
     m.add_function(wrap_pyfunction!(math::lerp, m)?)?;
