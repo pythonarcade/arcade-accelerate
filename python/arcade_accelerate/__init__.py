@@ -17,7 +17,7 @@ def bootstrap():
         "arcade.math",
         "arcade.geometry",
         "arcade.sprite_list.collision",
-        "arcade.sprite.base"
+        "arcade.sprite.base",
     ]
 
     pkgs = []
@@ -68,4 +68,5 @@ def patch_geometry():
 
 def patch_sprite():
     import arcade.sprite.base
+    
     arcade.sprite.base.BasicSprite = arcade_accelerate.BasicSprite
