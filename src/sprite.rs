@@ -1,11 +1,11 @@
-use pyo3::{prelude::*, intern};
 use pyo3::types::{PyDict, PyTuple};
+use pyo3::{intern, prelude::*};
 
 use crate::hitbox::HitBox;
 
 #[pyclass(subclass, module = "arcade.sprite.base")]
 pub struct BasicSprite {
-    #[pyo3(get, name="_texture")]
+    #[pyo3(get, name = "_texture")]
     texture: PyObject,
     position: (f32, f32),
     #[pyo3(get, name = "_depth")]
@@ -81,7 +81,11 @@ impl BasicSprite {
     }
 
     #[setter]
-    fn set_position(mut self_: PyRefMut<'_, BasicSprite>, py: Python<'_>, new_value: (f32, f32)) -> PyResult<()> {
+    fn set_position(
+        mut self_: PyRefMut<'_, BasicSprite>,
+        py: Python<'_>,
+        new_value: (f32, f32),
+    ) -> PyResult<()> {
         if new_value == self_.position {
             return Ok(());
         }
@@ -90,7 +94,7 @@ impl BasicSprite {
         self_.hitbox.position = new_value;
 
         let sprite_lists = self_.sprite_lists.clone();
-        let s= Py::from(self_);
+        let s = Py::from(self_);
         for sprite_list in sprite_lists.iter() {
             sprite_list.call_method1(py, intern!(py, "_update_position"), (&s,))?;
         }
@@ -114,7 +118,11 @@ impl BasicSprite {
     }
 
     #[setter]
-    fn set_scalexy(mut self_: PyRefMut<BasicSprite>, py: Python<'_>, new_value: (f32, f32)) -> PyResult<()> {
+    fn set_scalexy(
+        mut self_: PyRefMut<BasicSprite>,
+        py: Python<'_>,
+        new_value: (f32, f32),
+    ) -> PyResult<()> {
         if new_value == self_.scale {
             return Ok(());
         }
@@ -172,7 +180,11 @@ impl BasicSprite {
     }
 
     #[setter]
-    fn set_texture(mut self_: PyRefMut<BasicSprite>, py: Python<'_>, new_value: PyObject) -> PyResult<()> {
+    fn set_texture(
+        mut self_: PyRefMut<BasicSprite>,
+        py: Python<'_>,
+        new_value: PyObject,
+    ) -> PyResult<()> {
         if new_value.is(&self_.texture) {
             return Ok(());
         }
@@ -208,7 +220,11 @@ impl BasicSprite {
     }
 
     #[setter]
-    fn set_color(mut self_: PyRefMut<BasicSprite>, py: Python<'_>, new_value: Vec<u8>) -> PyResult<()> {
+    fn set_color(
+        mut self_: PyRefMut<BasicSprite>,
+        py: Python<'_>,
+        new_value: Vec<u8>,
+    ) -> PyResult<()> {
         let new_color: (u8, u8, u8, u8) = match new_value.len() {
             4 => (new_value[0], new_value[1], new_value[2], new_value[3]),
             3 => (new_value[0], new_value[1], new_value[2], self_.color.3),
@@ -254,7 +270,11 @@ impl BasicSprite {
     }
 
     #[setter]
-    fn set_visible(mut self_: PyRefMut<BasicSprite>, py: Python<'_>, new_value: bool) -> PyResult<()> {
+    fn set_visible(
+        mut self_: PyRefMut<BasicSprite>,
+        py: Python<'_>,
+        new_value: bool,
+    ) -> PyResult<()> {
         self_.color.3 = if new_value { 255 } else { 0 };
 
         for sprite_list in self_.sprite_lists.iter() {
@@ -299,7 +319,11 @@ impl BasicSprite {
     }
 
     #[setter]
-    fn set_height(mut self_: PyRefMut<BasicSprite>, py: Python<'_>, new_value: f32) -> PyResult<()> {
+    fn set_height(
+        mut self_: PyRefMut<BasicSprite>,
+        py: Python<'_>,
+        new_value: f32,
+    ) -> PyResult<()> {
         if self_.height == new_value {
             return Ok(());
         }
