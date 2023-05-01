@@ -66,7 +66,8 @@ def patch_geometry():
         arcade_accelerate.are_polygons_intersecting
     )
 
+
 def patch_sprite():
     import arcade.sprite.base
-    
+
     arcade.sprite.base.BasicSprite = arcade_accelerate.BasicSprite
