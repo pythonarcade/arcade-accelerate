@@ -16,3 +16,14 @@ lint: lint-python lint-rust
 .PHONY: test
 test:
 	cargo test
+
+.PHONY: fmt
+fmt: fmt-python fmt-rust
+
+.PHONY: fmt-python
+fmt-python:
+	black python
+
+.PHONY: fmt-rust
+fmt-rust:
+	cargo fmt
