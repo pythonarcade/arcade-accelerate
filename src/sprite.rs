@@ -1,28 +1,27 @@
-use pyo3::prelude::*;
 use pyo3::types::{PyDict, PyTuple};
+use pyo3::{intern, prelude::*};
 
 use crate::hitbox::HitBox;
 
-#[derive(Clone)]
 #[pyclass(subclass, module = "arcade.sprite.base")]
 pub struct BasicSprite {
+    #[pyo3(get, name = "_texture")]
     texture: PyObject,
     position: (f32, f32),
+    #[pyo3(get, name = "_depth")]
     depth: f32,
+    #[pyo3(get, name = "_scale")]
     scale: (f32, f32),
+    #[pyo3(get, name = "_width")]
     width: f32,
+    #[pyo3(get, name = "_height")]
     height: f32,
     hitbox: HitBox,
+    #[pyo3(get, name = "_color")]
     color: (u8, u8, u8, u8),
     sprite_lists: Vec<PyObject>,
+    #[pyo3(get, name = "_angle")]
     angle: f32,
-}
-
-impl IntoPy<Py<PyTuple>> for BasicSprite {
-    fn into_py(self, py: Python) -> Py<PyTuple> {
-        let vec: Vec<PyObject> = vec![self.into_py(py)];
-        PyTuple::new(py, vec).into()
-    }
 }
 
 #[pymethods]
@@ -40,17 +39,17 @@ impl BasicSprite {
         let final_scale = (scale.unwrap_or(1.0), scale.unwrap_or(1.0));
         let final_position = (center_x.unwrap_or(0.0), center_y.unwrap_or(0.0));
         let points: Vec<(f32, f32)> = texture
-            .getattr(py, "hit_box_points")
+            .getattr(py, intern!(py, "hit_box_points"))
             .unwrap()
             .extract(py)
             .expect("Failed to Load Hit Box Points from Texture");
         let mut width: f32 = texture
-            .getattr(py, "width")
+            .getattr(py, intern!(py, "width"))
             .unwrap()
             .extract(py)
             .expect("Failed to Load Width from Texture");
         let mut height: f32 = texture
-            .getattr(py, "height")
+            .getattr(py, intern!(py, "height"))
             .unwrap()
             .extract(py)
             .expect("Failed to Load Height From Texture");
@@ -82,16 +81,22 @@ impl BasicSprite {
     }
 
     #[setter]
-    fn set_position(&mut self, py: Python<'_>, new_value: (f32, f32)) -> PyResult<()> {
-        if new_value == self.position {
+    fn set_position(
+        mut self_: PyRefMut<'_, BasicSprite>,
+        py: Python<'_>,
+        new_value: (f32, f32),
+    ) -> PyResult<()> {
+        if new_value == self_.position {
             return Ok(());
         }
 
-        self.position = new_value;
-        self.hitbox.position = new_value;
+        self_.position = new_value;
+        self_.hitbox.position = new_value;
 
-        for sprite_list in self.sprite_lists.iter() {
-            sprite_list.call_method1(py, "_update_position", self.clone())?;
+        let sprite_lists = self_.sprite_lists.clone();
+        let s = Py::from(self_);
+        for sprite_list in sprite_lists.iter() {
+            sprite_list.call_method1(py, intern!(py, "_update_position"), (&s,))?;
         }
 
         Ok(())
@@ -103,8 +108,8 @@ impl BasicSprite {
     }
 
     #[setter]
-    fn set_scale(&mut self, py: Python<'_>, new_value: f32) -> PyResult<()> {
-        self.set_scalexy(py, (new_value, new_value))
+    fn set_scale(self_: PyRefMut<BasicSprite>, py: Python<'_>, new_value: f32) -> PyResult<()> {
+        BasicSprite::set_scalexy(self_, py, (new_value, new_value))
     }
 
     #[getter]
@@ -113,33 +118,37 @@ impl BasicSprite {
     }
 
     #[setter]
-    fn set_scalexy(&mut self, py: Python<'_>, new_value: (f32, f32)) -> PyResult<()> {
-        if new_value == self.scale {
+    fn set_scalexy(
+        mut self_: PyRefMut<BasicSprite>,
+        py: Python<'_>,
+        new_value: (f32, f32),
+    ) -> PyResult<()> {
+        if new_value == self_.scale {
             return Ok(());
         }
 
-        self.scale = new_value;
-        self.hitbox.scale = new_value;
+        self_.scale = new_value;
+        self_.hitbox.scale = new_value;
 
-        let tex_width: f32 = self
+        let tex_width: f32 = self_
             .texture
-            .getattr(py, "width")
+            .getattr(py, intern!(py, "width"))
             .unwrap()
             .extract(py)
             .expect("Failed to Load Width From Texture");
 
-        let tex_height: f32 = self
+        let tex_height: f32 = self_
             .texture
-            .getattr(py, "height")
+            .getattr(py, intern!(py, "height"))
             .unwrap()
             .extract(py)
             .expect("Failed to Load Height From Texture");
 
-        self.width = tex_width * self.scale.0;
-        self.height = tex_height * self.scale.1;
+        self_.width = tex_width * self_.scale.0;
+        self_.height = tex_height * self_.scale.1;
 
-        for sprite_list in self.sprite_lists.iter() {
-            sprite_list.call_method1(py, "_update_size", self.clone())?;
+        for sprite_list in self_.sprite_lists.iter() {
+            sprite_list.call_method1(py, intern!(py, "_update_size"), (&self_,))?;
         }
 
         Ok(())
@@ -151,51 +160,55 @@ impl BasicSprite {
     }
 
     #[setter]
-    fn set_depth(&mut self, py: Python<'_>, new_value: f32) -> PyResult<()> {
-        if new_value == self.depth {
+    fn set_depth(mut self_: PyRefMut<BasicSprite>, py: Python<'_>, new_value: f32) -> PyResult<()> {
+        if new_value == self_.depth {
             return Ok(());
         }
 
-        self.depth = new_value;
+        self_.depth = new_value;
 
-        for sprite_list in self.sprite_lists.iter() {
-            sprite_list.call_method1(py, "_update_depth", self.clone())?;
+        for sprite_list in self_.sprite_lists.iter() {
+            sprite_list.call_method1(py, intern!(py, "_update_depth"), (&self_,))?;
         }
 
         Ok(())
     }
 
     #[getter]
-    fn get_texture(&self) -> PyResult<PyObject> {
-        Ok(self.clone().texture)
+    fn get_texture(&self, py: Python<'_>) -> PyResult<PyObject> {
+        Ok(self.texture.clone_ref(py))
     }
 
     #[setter]
-    fn set_texture(&mut self, py: Python<'_>, new_value: PyObject) -> PyResult<()> {
-        if new_value.is(&self.texture) {
+    fn set_texture(
+        mut self_: PyRefMut<BasicSprite>,
+        py: Python<'_>,
+        new_value: PyObject,
+    ) -> PyResult<()> {
+        if new_value.is(&self_.texture) {
             return Ok(());
         }
 
-        self.texture = new_value;
+        self_.texture = new_value;
 
-        let new_width: f32 = self
+        let new_width: f32 = self_
             .texture
-            .getattr(py, "width")
+            .getattr(py, intern!(py, "width"))
             .unwrap()
             .extract(py)
             .expect("Failed to Load Width from Texture");
-        self.width = new_width * self.scale.0;
+        self_.width = new_width * self_.scale.0;
 
-        let new_height: f32 = self
+        let new_height: f32 = self_
             .texture
-            .getattr(py, "height")
+            .getattr(py, intern!(py, "height"))
             .unwrap()
             .extract(py)
             .expect("Failed to Load Height From Texture");
-        self.height = new_height * self.scale.1;
+        self_.height = new_height * self_.scale.1;
 
-        for sprite_list in self.sprite_lists.iter() {
-            sprite_list.call_method1(py, "_update_texture", self.clone())?;
+        for sprite_list in self_.sprite_lists.iter() {
+            sprite_list.call_method1(py, intern!(py, "_update_texture"), (&self_,))?;
         }
 
         Ok(())
@@ -207,21 +220,25 @@ impl BasicSprite {
     }
 
     #[setter]
-    fn set_color(&mut self, py: Python<'_>, new_value: Vec<u8>) -> PyResult<()> {
+    fn set_color(
+        mut self_: PyRefMut<BasicSprite>,
+        py: Python<'_>,
+        new_value: Vec<u8>,
+    ) -> PyResult<()> {
         let new_color: (u8, u8, u8, u8) = match new_value.len() {
             4 => (new_value[0], new_value[1], new_value[2], new_value[3]),
-            3 => (new_value[0], new_value[1], new_value[2], self.color.3),
+            3 => (new_value[0], new_value[1], new_value[2], self_.color.3),
             _ => panic!("Color must be 3 or 4 ints from 0-255"),
         };
 
-        if new_color == self.color {
+        if new_color == self_.color {
             return Ok(());
         }
 
-        self.color = new_color;
+        self_.color = new_color;
 
-        for sprite_list in self.sprite_lists.iter() {
-            sprite_list.call_method1(py, "_update_color", self.clone())?;
+        for sprite_list in self_.sprite_lists.iter() {
+            sprite_list.call_method1(py, intern!(py, "_update_color"), (&self_,))?;
         }
 
         Ok(())
@@ -233,15 +250,15 @@ impl BasicSprite {
     }
 
     #[setter]
-    fn set_alpha(&mut self, py: Python<'_>, new_value: u8) -> PyResult<()> {
-        if self.color.3 == new_value {
+    fn set_alpha(mut self_: PyRefMut<BasicSprite>, py: Python<'_>, new_value: u8) -> PyResult<()> {
+        if self_.color.3 == new_value {
             return Ok(());
         }
 
-        self.color.3 = new_value;
+        self_.color.3 = new_value;
 
-        for sprite_list in self.sprite_lists.iter() {
-            sprite_list.call_method1(py, "_update_color", self.clone())?;
+        for sprite_list in self_.sprite_lists.iter() {
+            sprite_list.call_method1(py, intern!(py, "_update_color"), (&self_,))?;
         }
 
         Ok(())
@@ -253,11 +270,15 @@ impl BasicSprite {
     }
 
     #[setter]
-    fn set_visible(&mut self, py: Python<'_>, new_value: bool) -> PyResult<()> {
-        self.color.3 = if new_value { 255 } else { 0 };
+    fn set_visible(
+        mut self_: PyRefMut<BasicSprite>,
+        py: Python<'_>,
+        new_value: bool,
+    ) -> PyResult<()> {
+        self_.color.3 = if new_value { 255 } else { 0 };
 
-        for sprite_list in self.sprite_lists.iter() {
-            sprite_list.call_method1(py, "_update_color", self.clone())?;
+        for sprite_list in self_.sprite_lists.iter() {
+            sprite_list.call_method1(py, intern!(py, "_update_color"), (&self_,))?;
         }
 
         Ok(())
@@ -269,24 +290,24 @@ impl BasicSprite {
     }
 
     #[setter]
-    fn set_width(&mut self, py: Python<'_>, new_value: f32) -> PyResult<()> {
-        if self.width == new_value {
+    fn set_width(mut self_: PyRefMut<BasicSprite>, py: Python<'_>, new_value: f32) -> PyResult<()> {
+        if self_.width == new_value {
             return Ok(());
         }
 
-        let tex_width: f32 = self
+        let tex_width: f32 = self_
             .texture
-            .getattr(py, "width")
+            .getattr(py, intern!(py, "width"))
             .unwrap()
             .extract(py)
             .expect("Failed to Load Width From Texture");
 
-        self.scale = (new_value / tex_width, self.scale.1);
-        self.width = new_value;
-        self.hitbox.scale = self.scale;
+        self_.scale = (new_value / tex_width, self_.scale.1);
+        self_.width = new_value;
+        self_.hitbox.scale = self_.scale;
 
-        for sprite_list in self.sprite_lists.iter() {
-            sprite_list.call_method1(py, "_update_width", self.clone())?;
+        for sprite_list in self_.sprite_lists.iter() {
+            sprite_list.call_method1(py, intern!(py, "_update_width"), (&self_,))?;
         }
 
         Ok(())
@@ -298,24 +319,28 @@ impl BasicSprite {
     }
 
     #[setter]
-    fn set_height(&mut self, py: Python<'_>, new_value: f32) -> PyResult<()> {
-        if self.height == new_value {
+    fn set_height(
+        mut self_: PyRefMut<BasicSprite>,
+        py: Python<'_>,
+        new_value: f32,
+    ) -> PyResult<()> {
+        if self_.height == new_value {
             return Ok(());
         }
 
-        let tex_height: f32 = self
+        let tex_height: f32 = self_
             .texture
-            .getattr(py, "height")
+            .getattr(py, intern!(py, "height"))
             .unwrap()
             .extract(py)
             .expect("Failed to Load Height From Texture");
 
-        self.scale = (self.scale.0, new_value / tex_height);
-        self.height = new_value;
-        self.hitbox.scale = self.scale;
+        self_.scale = (self_.scale.0, new_value / tex_height);
+        self_.height = new_value;
+        self_.hitbox.scale = self_.scale;
 
-        for sprite_list in self.sprite_lists.iter() {
-            sprite_list.call_method1(py, "_update_height", self.clone())?;
+        for sprite_list in self_.sprite_lists.iter() {
+            sprite_list.call_method1(py, intern!(py, "_update_height"), (&self_,))?;
         }
 
         Ok(())
@@ -327,8 +352,9 @@ impl BasicSprite {
     }
 
     #[setter]
-    fn set_center_x(&mut self, py: Python<'_>, new_value: f32) -> PyResult<()> {
-        self.set_position(py, (new_value, self.position.1))
+    fn set_center_x(self_: PyRefMut<BasicSprite>, py: Python<'_>, new_value: f32) -> PyResult<()> {
+        let y = self_.position.1;
+        BasicSprite::set_position(self_, py, (new_value, y))
     }
 
     #[getter]
@@ -337,8 +363,9 @@ impl BasicSprite {
     }
 
     #[setter]
-    fn set_center_y(&mut self, py: Python<'_>, new_value: f32) -> PyResult<()> {
-        self.set_position(py, (self.position.0, new_value))
+    fn set_center_y(self_: PyRefMut<BasicSprite>, py: Python<'_>, new_value: f32) -> PyResult<()> {
+        let x = self_.position.0;
+        BasicSprite::set_position(self_, py, (x, new_value))
     }
 
     #[getter]
@@ -347,10 +374,12 @@ impl BasicSprite {
     }
 
     #[setter]
-    fn set_left(&mut self, py: Python<'_>, new_value: f32) -> PyResult<()> {
-        let leftmost = self.hitbox.left_native();
+    fn set_left(self_: PyRefMut<BasicSprite>, py: Python<'_>, new_value: f32) -> PyResult<()> {
+        let s = &*self_;
+        let leftmost = s.hitbox.left_native();
         let diff = new_value - leftmost;
-        self.set_center_x(py, self.position.0 + diff)
+        let x = s.position.0;
+        BasicSprite::set_center_x(self_, py, x + diff)
     }
 
     #[getter]
@@ -359,10 +388,11 @@ impl BasicSprite {
     }
 
     #[setter]
-    fn set_right(&mut self, py: Python<'_>, new_value: f32) -> PyResult<()> {
-        let rightmost = self.hitbox.right_native();
+    fn set_right(self_: PyRefMut<BasicSprite>, py: Python<'_>, new_value: f32) -> PyResult<()> {
+        let rightmost = self_.hitbox.right_native();
         let diff = rightmost - new_value;
-        self.set_center_x(py, self.position.0 - diff)
+        let x = self_.position.0;
+        BasicSprite::set_center_x(self_, py, x - diff)
     }
 
     #[getter]
@@ -371,10 +401,11 @@ impl BasicSprite {
     }
 
     #[setter]
-    fn set_bottom(&mut self, py: Python<'_>, new_value: f32) -> PyResult<()> {
-        let lowest = self.hitbox.bottom_native();
+    fn set_bottom(self_: PyRefMut<BasicSprite>, py: Python<'_>, new_value: f32) -> PyResult<()> {
+        let lowest = self_.hitbox.bottom_native();
         let diff = lowest - new_value;
-        self.set_center_y(py, self.position.1 - diff)
+        let y = self_.position.1;
+        BasicSprite::set_center_y(self_, py, y - diff)
     }
 
     #[getter]
@@ -383,16 +414,17 @@ impl BasicSprite {
     }
 
     #[setter]
-    fn set_top(&mut self, py: Python<'_>, new_value: f32) -> PyResult<()> {
-        let highest = self.hitbox.top_native();
+    fn set_top(self_: PyRefMut<BasicSprite>, py: Python<'_>, new_value: f32) -> PyResult<()> {
+        let highest = self_.hitbox.top_native();
         let diff = highest - new_value;
-        self.set_center_y(py, self.position.1 - diff)
+        let y = self_.position.1;
+        BasicSprite::set_center_y(self_, py, y - diff)
     }
 
-    fn update_spatial_hash(&self, py: Python<'_>) -> PyResult<()> {
-        for sprite_list in self.sprite_lists.iter() {
+    fn update_spatial_hash(self_: PyRef<BasicSprite>, py: Python<'_>) -> PyResult<()> {
+        for sprite_list in self_.sprite_lists.iter() {
             let spatial_hash: PyObject = sprite_list
-                .getattr(py, "spatial_hash")
+                .getattr(py, intern!(py, "spatial_hash"))
                 .unwrap()
                 .extract(py)
                 .unwrap();
@@ -401,7 +433,7 @@ impl BasicSprite {
                 return Ok(());
             }
 
-            spatial_hash.call_method1(py, "move", self.clone())?;
+            spatial_hash.call_method1(py, intern!(py, "move"), (&self_,))?;
         }
 
         Ok(())
@@ -411,12 +443,12 @@ impl BasicSprite {
         self.sprite_lists.push(new_list);
     }
 
-    fn remove_from_sprite_lists(&mut self, py: Python<'_>) -> PyResult<()> {
-        while !self.sprite_lists.is_empty() {
-            self.sprite_lists[0].call_method1(py, "remove", self.clone())?;
+    fn remove_from_sprite_lists(mut self_: PyRefMut<BasicSprite>, py: Python<'_>) -> PyResult<()> {
+        while !self_.sprite_lists.is_empty() {
+            self_.sprite_lists[0].call_method1(py, intern!(py, "remove"), (&self_,))?;
         }
 
-        self.sprite_lists.clear();
+        self_.sprite_lists.clear();
 
         Ok(())
     }
@@ -450,7 +482,7 @@ impl Sprite {
             PathOrTexture::First(path_string) => {
                 let arcade = PyModule::import(py, "arcade").expect("Failed to import arcade");
                 arcade
-                    .getattr("load_texture")
+                    .getattr(intern!(py, "load_texture"))
                     .expect("No arcade.load_texture function found")
                     .call1(PyTuple::new(py, vec![path_string]))
                     .expect("Failed to execute arcade.load_texture")
@@ -488,8 +520,9 @@ impl Sprite {
         super_.angle = new_value;
         super_.hitbox.angle = new_value;
 
-        for sprite_list in super_.sprite_lists.iter() {
-            sprite_list.call_method1(py, "_update_height", super_.clone())?;
+        let sprite_lists = super_.sprite_lists.clone();
+        for sprite_list in sprite_lists.iter() {
+            sprite_list.call_method1(py, intern!(py, "_update_height"), (&self_,))?;
         }
 
         Ok(())
