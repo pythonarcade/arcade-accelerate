@@ -28,6 +28,8 @@ homepage = "https://github.com/pythonarcade/arcade-accelerate"
 dev = [
     "ruff",
     "black",
+    "matplotlib",
+    "seaborn"
 ]
 
 [tool.maturin]
