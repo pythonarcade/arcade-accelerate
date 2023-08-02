@@ -10,14 +10,12 @@ def bootstrap():
     patch_geometry()
     patch_hitboxes()
     patch_spritelist_collision()
-    patch_sprite()
 
     exclude = [
         "arcade.hitbox.base",
         "arcade.math",
         "arcade.geometry",
         "arcade.sprite_list.collision",
-        "arcade.sprite.base",
     ]
 
     pkgs = []
@@ -65,9 +63,3 @@ def patch_geometry():
     arcade.geometry.are_polygons_intersecting = (
         arcade_accelerate.are_polygons_intersecting
     )
-
-
-def patch_sprite():
-    import arcade.sprite.base
-
-    arcade.sprite.base.BasicSprite = arcade_accelerate.BasicSprite
