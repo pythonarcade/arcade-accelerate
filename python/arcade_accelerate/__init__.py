@@ -1,73 +1,43 @@
 import sys
 
-import arcade
-from arcade_accelerate import arcade_accelerate  # type: ignore
-
+from arcade_accelerate import arcade_accelerate
+from arcade_accelerate.module_patcher import AutoPopulatingDictionary, PatchingMetaPathFinder  # type: ignore
 
 def bootstrap():
+    patches = AutoPopulatingDictionary()
+    sys.meta_path.insert(0, PatchingMetaPathFinder(patches))
+
     """Replace arcade math functions with rust accelerated versions."""
-    patch_math()
-    patch_geometry()
-    patch_hitboxes()
-    patch_spritelist_collision()
-    patch_sprite()
-
-    exclude = [
-        "arcade.hitbox.base",
-        "arcade.math",
-        "arcade.geometry",
-        "arcade.sprite_list.collision",
-        "arcade.sprite.base",
-    ]
-
-    pkgs = []
-    for mod in exclude:
-        pkg = mod.split(".", 1)[0]
-        pkgs.append(pkg)
-
-    to_uncache = []
-    for mod in sys.modules:
-        if mod in exclude:
-            continue
-
-        if mod in pkgs:
-            to_uncache.append(mod)
-            continue
-
-        for pkg in pkgs:
-            if mod.startswith(pkg + "."):
-                to_uncache.append(mod)
-                break
-
-    for mod in to_uncache:
-        del sys.modules[mod]
+    patch_math(patches)
+    patch_geometry(patches)
+    patch_hitboxes(patches)
+    patch_spritelist_collision(patches)
+    patch_sprite(patches)
 
 
-def patch_hitboxes():
-    arcade.hitbox.base.HitBox = arcade_accelerate.HitBox
-    arcade.hitbox.base.RotatableHitBox = arcade_accelerate.RotatableHitBox
+def patch_hitboxes(patches):
+    patches['arcade.hitbox.base'].HitBox = arcade_accelerate.HitBox
+    patches['arcade.hitbox.base'].RotatableHitBox = arcade_accelerate.RotatableHitBox
 
 
-def patch_spritelist_collision():
-    arcade.sprite_list.collision.check_for_collision_with_list = (
+def patch_spritelist_collision(patches):
+    patches['arcade.sprite_list.collision'].check_for_collision_with_list = (
         arcade_accelerate.check_for_collision_with_list
     )
-    arcade.sprite_list.collision.check_for_collision_with_lists = (
+    patches['arcade.sprite_list.collision'].check_for_collision_with_lists = (
         arcade_accelerate.check_for_collision_with_lists
     )
 
 
-def patch_math():
-    arcade.math.rotate_point = arcade_accelerate.rotate_point
+def patch_math(patches):
+    patches['arcade.math'].rotate_point = arcade_accelerate.rotate_point
 
 
-def patch_geometry():
-    arcade.geometry.are_polygons_intersecting = (
+def patch_geometry(patches):
+    patches['arcade.geometry'].are_polygons_intersecting = (
         arcade_accelerate.are_polygons_intersecting
     )
 
 
-def patch_sprite():
-    import arcade.sprite.base
-
-    arcade.sprite.base.BasicSprite = arcade_accelerate.BasicSprite
+def patch_sprite(patches):
+    patches['arcade.sprite.base'].BasicSprite = arcade_accelerate.BasicSprite
