@@ -1,7 +1,11 @@
 import sys
 
 from arcade_accelerate import arcade_accelerate
-from arcade_accelerate.module_patcher import AutoPopulatingDictionary, PatchingMetaPathFinder  # type: ignore
+from arcade_accelerate.module_patcher import (
+    AutoPopulatingDictionary,
+    PatchingMetaPathFinder,
+)
+
 
 def bootstrap():
     patches = AutoPopulatingDictionary()
@@ -12,32 +16,27 @@ def bootstrap():
     patch_geometry(patches)
     patch_hitboxes(patches)
     patch_spritelist_collision(patches)
-    patch_sprite(patches)
 
 
 def patch_hitboxes(patches):
-    patches['arcade.hitbox.base'].HitBox = arcade_accelerate.HitBox
-    patches['arcade.hitbox.base'].RotatableHitBox = arcade_accelerate.RotatableHitBox
+    patches["arcade.hitbox.base"].HitBox = arcade_accelerate.HitBox
+    patches["arcade.hitbox.base"].RotatableHitBox = arcade_accelerate.RotatableHitBox
 
 
 def patch_spritelist_collision(patches):
-    patches['arcade.sprite_list.collision'].check_for_collision_with_list = (
-        arcade_accelerate.check_for_collision_with_list
-    )
-    patches['arcade.sprite_list.collision'].check_for_collision_with_lists = (
-        arcade_accelerate.check_for_collision_with_lists
-    )
+    patches[
+        "arcade.sprite_list.collision"
+    ].check_for_collision_with_list = arcade_accelerate.check_for_collision_with_list
+    patches[
+        "arcade.sprite_list.collision"
+    ].check_for_collision_with_lists = arcade_accelerate.check_for_collision_with_lists
 
 
 def patch_math(patches):
-    patches['arcade.math'].rotate_point = arcade_accelerate.rotate_point
+    patches["arcade.math"].rotate_point = arcade_accelerate.rotate_point
 
 
 def patch_geometry(patches):
-    patches['arcade.geometry'].are_polygons_intersecting = (
-        arcade_accelerate.are_polygons_intersecting
-    )
-
-
-def patch_sprite(patches):
-    patches['arcade.sprite.base'].BasicSprite = arcade_accelerate.BasicSprite
+    patches[
+        "arcade.geometry"
+    ].are_polygons_intersecting = arcade_accelerate.are_polygons_intersecting
