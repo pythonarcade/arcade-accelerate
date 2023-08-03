@@ -1,3 +1,4 @@
+import multiprocessing
 import argparse
 import sys
 from datetime import datetime
@@ -39,4 +40,5 @@ def parse_args(args):
 
 
 if __name__ == "__main__":
+    multiprocessing.set_start_method("spawn")
     main()

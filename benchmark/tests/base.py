@@ -1,13 +1,11 @@
-import sys
+import multiprocessing
 from pathlib import Path
 from typing import Tuple
-
-import arcade
 
 from benchmark.timing import PerformanceTiming
 
 
-class PerfTest:
+class PerfTest(multiprocessing.Process):
     name = "default"
     type = "default"
     series_name = "default"
@@ -15,6 +13,7 @@ class PerfTest:
 
     def __init__(
         self,
+        session_dir: Path,
         size: Tuple[int, int],
         title: str = "Perf Test",
         start_count: int = 0,
@@ -22,6 +21,8 @@ class PerfTest:
         duration: float = 60.0,
         **kwargs,
     ):
+        super().__init__()
+        self.session_dir = session_dir
         self.size = size
         self.title = title
         self.start_count = start_count
@@ -43,9 +44,9 @@ class PerfTest:
     def update_state(self):
         pass
 
-    def run(self, session_dir: Path):
+    def run(self):
         self.frame = 0
-        out_path = session_dir / "data"
+        out_path = self.session_dir / "data"
         out_path.mkdir(parents=True, exist_ok=True)
 
         self.timing = PerformanceTiming(
@@ -61,6 +62,7 @@ class ArcadePerfTest(PerfTest):
 
     def __init__(
         self,
+        session_dir: Path,
         size: Tuple[int, int],
         title: str = "Perf Test",
         start_count: int = 0,
@@ -69,6 +71,7 @@ class ArcadePerfTest(PerfTest):
         **kwargs,
     ):
         super().__init__(
+            session_dir,
             size=size,
             title=title,
             start_count=start_count,
@@ -99,9 +102,9 @@ class ArcadePerfTest(PerfTest):
             self.update_state()
             self.window.flip()
 
-    def run(self, session_dir: Path):
+    def run(self):
         """Run the test collecting data."""
-        super().run(session_dir)
+        super().run()
         self.create_window()
         self.setup()
 
@@ -129,6 +132,7 @@ class ArcadePerfTest(PerfTest):
         self.timing.write()
 
     def create_window(self):
+        import arcade
         try:
             self.window = arcade.get_window()
             self.window.set_size(*self.size)
@@ -142,22 +146,4 @@ class ArcadePerfTest(PerfTest):
 
 
 class AcceleratedPerfTest(ArcadePerfTest):
-    type = "arcade-accelerate"
-
-    def run(self, session_dir: Path):
-        # This is necessary to unload arcade and ensure that we have the arcade-accelerate bootstrap applied
-        # The test module itself is responsbile for applying the bootstrap, but arcade needs to be fully unloaded before then
-        to_uncache = []
-        for mod in sys.modules:
-            if mod.startswith("arcade."):
-                to_uncache.append(mod)
-
-        for mod in to_uncache:
-            del sys.modules[mod]
-
-        import arcade_accelerate
-
-        arcade_accelerate.bootstrap()
-        import arcade
-
-        super().run(session_dir)
+    type = "accelerate"

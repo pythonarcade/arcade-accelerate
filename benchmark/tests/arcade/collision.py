@@ -1,4 +1,5 @@
 import random
+from pathlib import Path
 
 import arcade
 
@@ -20,8 +21,9 @@ class Test(ArcadePerfTest):
     name = "collision"
     instances = (({"method": 3}, "Simple"),)
 
-    def __init__(self, method: int = DEFAULT_METHOD):
+    def __init__(self, session_dir: Path, method: int = DEFAULT_METHOD):
         super().__init__(
+            session_dir,
             size=(SCREEN_WIDTH, SCREEN_HEIGHT),
             title=SCREEN_TITLE,
             start_count=0,
