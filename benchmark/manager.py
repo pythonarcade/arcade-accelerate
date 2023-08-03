@@ -90,9 +90,9 @@ class TestManager:
             # If a test have multiple instances, create one instance for each
             if cls.instances:
                 for params, _ in cls.instances:
-                    self.add_test_instance(cls(**params))
+                    self.add_test_instance(cls(self.session_dir, **params))
             else:
-                self.add_test_instance(cls())
+                self.add_test_instance(cls(self.session_dir))
 
         if self.debug:
             num_instances = len(self.test_instances)
@@ -120,7 +120,8 @@ class TestManager:
     def run(self):
         """Run all tests"""
         for instance in self.test_instances:
-            instance.run(self.session_dir)
+            instance.start()
+            instance.join()
 
     def create_graph(
         self,

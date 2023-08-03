@@ -7,7 +7,9 @@ pub fn check_for_collision_with_list(
     py: Python<'_>,
     sprite: &PyAny, //
     sprite_list: &PyAny,
+    method: Option<i32>,
 ) -> Vec<PyObject> {
+    let _final_method = method.unwrap_or(3);
     let mut final_sprites: Vec<PyObject> = Vec::new();
 
     let mut hitbox1: Option<HitBox> = None;
