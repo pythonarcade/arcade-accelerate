@@ -35,7 +35,6 @@ jobs:
     if: "startsWith(github.ref, 'refs/tags/')"
     steps:
       - uses: actions/checkout@v4
-          architecture: ${{ matrix.target }}
       - name: Build wheels
         uses: PyO3/maturin-action@v1
         with:
