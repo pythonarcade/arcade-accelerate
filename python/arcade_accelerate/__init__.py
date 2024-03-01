@@ -24,12 +24,12 @@ def patch_hitboxes(patches):
 
 
 def patch_spritelist_collision(patches):
-    patches[
-        "arcade.sprite_list.collision"
-    ].check_for_collision_with_list = arcade_accelerate.check_for_collision_with_list
-    patches[
-        "arcade.sprite_list.collision"
-    ].check_for_collision_with_lists = arcade_accelerate.check_for_collision_with_lists
+    patches["arcade.sprite_list.collision"].check_for_collision_with_list = (
+        arcade_accelerate.check_for_collision_with_list
+    )
+    patches["arcade.sprite_list.collision"].check_for_collision_with_lists = (
+        arcade_accelerate.check_for_collision_with_lists
+    )
 
 
 def patch_math(patches):
@@ -37,6 +37,6 @@ def patch_math(patches):
 
 
 def patch_geometry(patches):
-    patches[
-        "arcade.geometry"
-    ].are_polygons_intersecting = arcade_accelerate.are_polygons_intersecting
+    patches["arcade.geometry"].are_polygons_intersecting = (
+        arcade_accelerate.are_polygons_intersecting
+    )
