@@ -14,8 +14,8 @@ pub fn rotate_point(x: f32, y: f32, cx: f32, cy: f32, angle: f32) -> (f32, f32) 
     let temp_y = y - cy;
 
     // rotate point
-    let xnew = (temp_x * c - temp_y * s) + cx;
-    let ynew = (temp_x * s + temp_y * c) + cy;
+    let xnew = (temp_x * c + temp_y * s) + cx;
+    let ynew = (-temp_x * s + temp_y * c) + cy;
 
     let precision = 10i32.pow(_PRECISION) as f32;
     let x_rounded = (xnew * precision).round() / precision;
@@ -232,6 +232,11 @@ mod tests {
     use super::*;
     use float_eq::assert_float_eq;
 
+    fn round_float(n: f32, decimals: u32) -> f32 {
+        let nn = 10i32.pow(decimals) as f32;
+        (n * nn).round() / nn
+    }
+
     #[test]
     fn test_clamp() {
         let mut result = clamp(1.2, 1.0, 2.0);
@@ -391,5 +396,53 @@ mod tests {
         result = s.rotated(25.0);
         assert_eq!(result.x, 0.0);
         assert_eq!(result.y, 0.0);
+    }
+
+    #[test]
+    fn test_rotate_point() {
+        let mut x: f32 = 0.0;
+        let mut y: f32 = 0.0;
+        let mut cx: f32 = 0.0;
+        let mut cy: f32 = 0.0;
+        let mut angle: f32 = 0.0;
+        let mut point: (f32, f32) = rotate_point(x, y, cx, cy, angle);
+        assert_float_eq!(round_float(point.0, 2), 0.0, abs <= 1.0e-3);
+        assert_float_eq!(round_float(point.1, 2), 0.0, abs <= 1.0e-3);
+
+        x = 0.0;
+        y = 0.0;
+        cx = 0.0;
+        cy = 0.0;
+        angle = 90.0;
+        point = rotate_point(x, y, cx, cy, angle);
+        assert_float_eq!(round_float(point.0, 2), 0.0, abs <= 1.0e-3);
+        assert_float_eq!(round_float(point.1, 2), 0.0, abs <= 1.0e-3);
+
+        x = 50.0;
+        y = 50.0;
+        cx = 0.0;
+        cy = 0.0;
+        angle = 0.0;
+        point = rotate_point(x, y, cx, cy, angle);
+        assert_float_eq!(round_float(point.0, 2), 50.0, abs <= 1.0e-3);
+        assert_float_eq!(round_float(point.1, 2), 50.0, abs <= 1.0e-3);
+
+        x = 50.0;
+        y = 0.0;
+        cx = 0.0;
+        cy = 0.0;
+        angle = 90.0;
+        point = rotate_point(x, y, cx, cy, angle);
+        assert_float_eq!(round_float(point.0, 2), 0.0, abs <= 1.0e-3);
+        assert_float_eq!(round_float(point.1, 2), -50.0, abs <= 1.0e-3);
+
+        x = 20.0;
+        y = 10.0;
+        cx = 10.0;
+        cy = 10.0;
+        angle = 180.0;
+        point = rotate_point(x, y, cx, cy, angle);
+        assert_float_eq!(round_float(point.0, 2), 0.0, abs <= 1.0e-3);
+        assert_float_eq!(round_float(point.1, 2), 10.0, abs <= 1.0e-3);
     }
 }

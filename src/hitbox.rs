@@ -158,8 +158,8 @@ impl RotatableHitBox {
         let rad_cos = rad.cos();
         let rad_sin = rad.sin();
         for point in super_.points.iter() {
-            let x = ((point.0 * rad_cos - point.1 * rad_sin) * super_.scale.0) + super_.position.0;
-            let y = ((point.0 * rad_sin + point.1 * rad_cos) * super_.scale.1) + super_.position.1;
+            let x = ((point.0 * rad_cos + point.1 * rad_sin) * super_.scale.0) + super_.position.0;
+            let y = ((-point.0 * rad_sin + point.1 * rad_cos) * super_.scale.1) + super_.position.1;
             new_points.push((x, y));
         }
 

@@ -2,6 +2,10 @@ use pyo3::prelude::*;
 
 #[pyfunction]
 pub fn are_polygons_intersecting(poly_a: Vec<(f32, f32)>, poly_b: Vec<(f32, f32)>) -> bool {
+    // If either polygon is empty, we should just return False
+    if poly_a.is_empty() || poly_b.is_empty() {
+        return false;
+    }
     let polygons = [poly_a, poly_b];
     for polygon in &polygons {
         for i1 in 0..polygon.len() {
@@ -168,6 +172,14 @@ mod tests {
         poly_a = vec![(0.0, 0.0), (1.0, 0.0), (1.0, 1.0), (0.0, 1.0)];
         poly_b = vec![(5.0, 5.0), (6.0, 5.0), (6.0, 6.0), (5.0, 6.0)];
         result = are_polygons_intersecting(poly_a, poly_b);
+        assert!(!result);
+    }
+
+    #[test]
+    fn test_empty_polygons_intersecting() {
+        let poly_a: Vec<(f32, f32)> = vec![];
+        let poly_b: Vec<(f32, f32)> = vec![];
+        let result = are_polygons_intersecting(poly_a, poly_b);
         assert!(!result);
     }
 
