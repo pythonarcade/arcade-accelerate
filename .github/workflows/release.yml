@@ -83,11 +83,6 @@ jobs:
         with:
           name: pypi_files_${{ matrix.os }}_${{ matrix.target }}_${{ matrix.interpreter || 'all' }}_${{ matrix.manylinux }}
           path: dist
-      - name: Upload wheels
-        uses: actions/upload-artifact@v4
-        with:
-          name: wheels
-          path: dist
 
   inspect-pypi-assets:
     needs: [build, build-sdist]
