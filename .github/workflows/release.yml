@@ -49,6 +49,9 @@ jobs:
           - os: windows
             target: i686
             python-architecture: x86
+        exclude:
+          - os: windows
+            target: aarch64
     runs-on: ${{ (matrix.os == 'linux' && 'ubuntu') || matrix.os }}-latest        
     if: "startsWith(github.ref, 'refs/tags/')"
     steps:
