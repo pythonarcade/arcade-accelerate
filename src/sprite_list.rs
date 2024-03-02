@@ -1,4 +1,4 @@
-use crate::geometry::are_polygons_intersecting;
+use crate::geometry::are_polygons_intersecting_native;
 use crate::hitbox::{HitBox, RotatableHitBox};
 use pyo3::prelude::*;
 
@@ -72,7 +72,7 @@ pub fn check_for_collision_with_list(
             panic!("unknown hitbox type");
         };
 
-        let check_2 = are_polygons_intersecting(main_points.to_vec(), other_points);
+        let check_2 = are_polygons_intersecting_native(&main_points, &other_points);
 
         if check_2 {
             final_sprites.push(sprite2.to_object(py));
@@ -149,7 +149,7 @@ pub fn check_for_collision_with_lists(
                 panic!("unknown hitbox type");
             };
 
-            let check_2 = are_polygons_intersecting(main_points.to_vec(), other_points);
+            let check_2 = are_polygons_intersecting_native(&main_points, &other_points);
 
             if check_2 {
                 final_sprites.push(sprite2.to_object(py));
