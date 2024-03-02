@@ -49,10 +49,6 @@ jobs:
           - os: windows
             target: i686
             python-architecture: x86
-            # Windows aarch64 only supported by Python 3.11+
-          - os: windows
-            target: aarch64
-            interpreter: 3.11 3.12
     runs-on: ${{ (matrix.os == 'linux' && 'ubuntu') || matrix.os }}-latest        
     if: "startsWith(github.ref, 'refs/tags/')"
     steps:
