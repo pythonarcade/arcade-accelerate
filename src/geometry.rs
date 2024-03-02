@@ -112,7 +112,7 @@ pub fn is_point_in_polygon(x: f32, y: f32, polygon: Vec<(f32, f32)>) -> bool {
 
     // Create a point for line segment
     // from p to infinite
-    let extreme = (10000.0, p.1);
+    let extreme = (f32::MAX, p.1);
 
     // To count number of points in polygon
     // whose y-coordinate is equal to
