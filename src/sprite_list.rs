@@ -1,5 +1,6 @@
 use crate::geometry::are_polygons_intersecting_native;
 use crate::hitbox::{HitBox, NativeAdjustedPoints, RotatableHitBox};
+use pyo3::intern;
 use pyo3::prelude::*;
 
 #[pyfunction]
@@ -15,7 +16,7 @@ pub fn check_for_collision_with_list(
     let main_points: &Vec<(f32, f32)>;
     let mut hitbox1: HitBox;
     let mut hitbox2: RotatableHitBox;
-    let hitbox_py_object: &PyAny = sprite.getattr("_hit_box").unwrap();
+    let hitbox_py_object: &PyAny = sprite.getattr(intern!(py, "_hit_box")).unwrap();
 
     if hitbox_py_object.is_instance_of::<HitBox>() {
         hitbox1 = hitbox_py_object.extract::<HitBox>().unwrap();
@@ -27,7 +28,7 @@ pub fn check_for_collision_with_list(
         panic!("Unknown Hitbox Type")
     }
 
-    let sprite_list_list = sprite_list.getattr("sprite_list").unwrap();
+    let sprite_list_list = sprite_list.getattr(intern!(py, "sprite_list")).unwrap();
     let sprites_to_check: Vec<PyObject> = sprite_list_list.extract().unwrap();
 
     for sprite2 in sprites_to_check.iter() {
@@ -36,7 +37,7 @@ pub fn check_for_collision_with_list(
         let other_points: &Vec<(f32, f32)>;
         let mut other_hitbox1: HitBox;
         let mut other_hitbox2: RotatableHitBox;
-        let other_hitbox_py_object: &PyAny = other_sprite.getattr("_hit_box").unwrap();
+        let other_hitbox_py_object: &PyAny = other_sprite.getattr(intern!(py, "_hit_box")).unwrap();
 
         if other_hitbox_py_object.is_instance_of::<HitBox>() {
             other_hitbox1 = other_hitbox_py_object.extract::<HitBox>().unwrap();
@@ -69,7 +70,7 @@ pub fn check_for_collision_with_lists(
     let main_points: &Vec<(f32, f32)>;
     let mut hitbox1: HitBox;
     let mut hitbox2: RotatableHitBox;
-    let hitbox_py_object: &PyAny = sprite.getattr("_hit_box").unwrap();
+    let hitbox_py_object: &PyAny = sprite.getattr(intern!(py, "_hit_box")).unwrap();
 
     if hitbox_py_object.is_instance_of::<HitBox>() {
         hitbox1 = hitbox_py_object.extract::<HitBox>().unwrap();
@@ -82,7 +83,7 @@ pub fn check_for_collision_with_lists(
     }
 
     for sprite_list in sprite_lists.iter() {
-        let sprite_list_list = sprite_list.getattr("sprite_list").unwrap();
+        let sprite_list_list = sprite_list.getattr(intern!(py, "sprite_list")).unwrap();
         let sprites_to_check: Vec<PyObject> = sprite_list_list.extract().unwrap();
 
         for sprite2 in sprites_to_check.iter() {
@@ -91,7 +92,8 @@ pub fn check_for_collision_with_lists(
             let other_points: &Vec<(f32, f32)>;
             let mut other_hitbox1: HitBox;
             let mut other_hitbox2: RotatableHitBox;
-            let other_hitbox_py_object: &PyAny = other_sprite.getattr("_hit_box").unwrap();
+            let other_hitbox_py_object: &PyAny =
+                other_sprite.getattr(intern!(py, "_hit_box")).unwrap();
 
             if other_hitbox_py_object.is_instance_of::<HitBox>() {
                 other_hitbox1 = other_hitbox_py_object.extract::<HitBox>().unwrap();
