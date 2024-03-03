@@ -1,5 +1,5 @@
 use crate::geometry::are_polygons_intersecting_native;
-use crate::hitbox::{HitBox, RotatableHitBox};
+use crate::hitbox::{HitBox, NativeAdjustedPoints, RotatableHitBox};
 use pyo3::prelude::*;
 
 #[pyfunction]
@@ -12,67 +12,43 @@ pub fn check_for_collision_with_list(
     let _final_method = method.unwrap_or(3);
     let mut final_sprites: Vec<PyObject> = Vec::new();
 
-    let mut hitbox1: Option<HitBox> = None;
-    let mut hitbox2: Option<PyRef<'_, RotatableHitBox>> = None;
+    let main_points: &Vec<(f32, f32)>;
+    let mut hitbox1: HitBox;
+    let mut hitbox2: RotatableHitBox;
+    let hitbox_py_object: &PyAny = sprite.getattr("_hit_box").unwrap();
 
-    let cls: &str = sprite
-        .getattr("_hit_box")
-        .unwrap()
-        .get_type()
-        .name()
-        .unwrap();
-
-    match cls {
-        "HitBox" => {
-            hitbox1 = sprite.getattr("_hit_box").unwrap().extract().unwrap();
-        }
-        "RotatableHitBox" => {
-            hitbox2 = sprite.getattr("_hit_box").unwrap().extract().unwrap();
-        }
-        _ => panic!(),
-    }
-
-    let main_points: Vec<(f32, f32)> = if let Some(value) = hitbox1 {
-        value.get_adjusted_points_native()
-    } else if let Some(value) = hitbox2 {
-        RotatableHitBox::get_adjusted_points(value)
+    if hitbox_py_object.is_instance_of::<HitBox>() {
+        hitbox1 = hitbox_py_object.extract::<HitBox>().unwrap();
+        main_points = hitbox1.get_adjusted_points_native();
+    } else if hitbox_py_object.is_instance_of::<RotatableHitBox>() {
+        hitbox2 = hitbox_py_object.extract::<RotatableHitBox>().unwrap();
+        main_points = hitbox2.get_adjusted_points_native();
     } else {
-        panic!("unknown hitbox type");
-    };
+        panic!("Unknown Hitbox Type")
+    }
 
     let sprite_list_list = sprite_list.getattr("sprite_list").unwrap();
     let sprites_to_check: Vec<PyObject> = sprite_list_list.extract().unwrap();
 
     for sprite2 in sprites_to_check.iter() {
         let other_sprite: &PyAny = sprite2.as_ref(py);
-        let mut other_hitbox1: Option<HitBox> = None;
-        let mut other_hitbox2: Option<PyRef<'_, RotatableHitBox>> = None;
-        let other_cls: &str = other_sprite
-            .getattr("_hit_box")
-            .unwrap()
-            .get_type()
-            .name()
-            .unwrap();
 
-        match other_cls {
-            "HitBox" => {
-                other_hitbox1 = other_sprite.getattr("_hit_box").unwrap().extract().unwrap();
-            }
-            "RotatableHitBox" => {
-                other_hitbox2 = other_sprite.getattr("_hit_box").unwrap().extract().unwrap();
-            }
-            _ => panic!(),
+        let other_points: &Vec<(f32, f32)>;
+        let mut other_hitbox1: HitBox;
+        let mut other_hitbox2: RotatableHitBox;
+        let other_hitbox_py_object: &PyAny = other_sprite.getattr("_hit_box").unwrap();
+
+        if other_hitbox_py_object.is_instance_of::<HitBox>() {
+            other_hitbox1 = other_hitbox_py_object.extract::<HitBox>().unwrap();
+            other_points = other_hitbox1.get_adjusted_points_native();
+        } else if other_hitbox_py_object.is_instance_of::<RotatableHitBox>() {
+            other_hitbox2 = other_hitbox_py_object.extract::<RotatableHitBox>().unwrap();
+            other_points = other_hitbox2.get_adjusted_points_native();
+        } else {
+            panic!("Unknown Hitbox Type")
         }
 
-        let other_points: Vec<(f32, f32)> = if let Some(value) = other_hitbox1 {
-            value.get_adjusted_points_native()
-        } else if let Some(value) = other_hitbox2 {
-            RotatableHitBox::get_adjusted_points(value)
-        } else {
-            panic!("unknown hitbox type");
-        };
-
-        let check_2 = are_polygons_intersecting_native(&main_points, &other_points);
+        let check_2 = are_polygons_intersecting_native(main_points, other_points);
 
         if check_2 {
             final_sprites.push(sprite2.to_object(py));
@@ -89,33 +65,21 @@ pub fn check_for_collision_with_lists(
     sprite_lists: Vec<&PyAny>,
 ) -> Vec<PyObject> {
     let mut final_sprites: Vec<PyObject> = Vec::new();
-    let mut hitbox1: Option<HitBox> = None;
-    let mut hitbox2: Option<PyRef<'_, RotatableHitBox>> = None;
 
-    let cls: &str = sprite
-        .getattr("_hit_box")
-        .unwrap()
-        .get_type()
-        .name()
-        .unwrap();
+    let main_points: &Vec<(f32, f32)>;
+    let mut hitbox1: HitBox;
+    let mut hitbox2: RotatableHitBox;
+    let hitbox_py_object: &PyAny = sprite.getattr("_hit_box").unwrap();
 
-    match cls {
-        "HitBox" => {
-            hitbox1 = sprite.getattr("_hit_box").unwrap().extract().unwrap();
-        }
-        "RotatableHitBox" => {
-            hitbox2 = sprite.getattr("_hit_box").unwrap().extract().unwrap();
-        }
-        _ => panic!(),
-    }
-
-    let main_points: Vec<(f32, f32)> = if let Some(value) = hitbox1 {
-        value.get_adjusted_points_native()
-    } else if let Some(value) = hitbox2 {
-        RotatableHitBox::get_adjusted_points(value)
+    if hitbox_py_object.is_instance_of::<HitBox>() {
+        hitbox1 = hitbox_py_object.extract::<HitBox>().unwrap();
+        main_points = hitbox1.get_adjusted_points_native();
+    } else if hitbox_py_object.is_instance_of::<RotatableHitBox>() {
+        hitbox2 = hitbox_py_object.extract::<RotatableHitBox>().unwrap();
+        main_points = hitbox2.get_adjusted_points_native();
     } else {
-        panic!("unknown hitbox type")
-    };
+        panic!("Unknown Hitbox Type")
+    }
 
     for sprite_list in sprite_lists.iter() {
         let sprite_list_list = sprite_list.getattr("sprite_list").unwrap();
@@ -123,33 +87,23 @@ pub fn check_for_collision_with_lists(
 
         for sprite2 in sprites_to_check.iter() {
             let other_sprite: &PyAny = sprite2.as_ref(py);
-            let mut other_hitbox1: Option<HitBox> = None;
-            let mut other_hitbox2: Option<PyRef<'_, RotatableHitBox>> = None;
-            let other_cls: &str = other_sprite
-                .getattr("_hit_box")
-                .unwrap()
-                .get_type()
-                .name()
-                .unwrap();
-            match other_cls {
-                "HitBox" => {
-                    other_hitbox1 = other_sprite.getattr("_hit_box").unwrap().extract().unwrap();
-                }
-                "RotatableHitBox" => {
-                    other_hitbox2 = other_sprite.getattr("_hit_box").unwrap().extract().unwrap();
-                }
-                _ => panic!(),
+
+            let other_points: &Vec<(f32, f32)>;
+            let mut other_hitbox1: HitBox;
+            let mut other_hitbox2: RotatableHitBox;
+            let other_hitbox_py_object: &PyAny = other_sprite.getattr("_hit_box").unwrap();
+
+            if other_hitbox_py_object.is_instance_of::<HitBox>() {
+                other_hitbox1 = other_hitbox_py_object.extract::<HitBox>().unwrap();
+                other_points = other_hitbox1.get_adjusted_points_native();
+            } else if other_hitbox_py_object.is_instance_of::<RotatableHitBox>() {
+                other_hitbox2 = other_hitbox_py_object.extract::<RotatableHitBox>().unwrap();
+                other_points = other_hitbox2.get_adjusted_points_native();
+            } else {
+                panic!("Unknown Hitbox Type")
             }
 
-            let other_points: Vec<(f32, f32)> = if let Some(value) = other_hitbox1 {
-                value.get_adjusted_points_native()
-            } else if let Some(value) = other_hitbox2 {
-                RotatableHitBox::get_adjusted_points(value)
-            } else {
-                panic!("unknown hitbox type");
-            };
-
-            let check_2 = are_polygons_intersecting_native(&main_points, &other_points);
+            let check_2 = are_polygons_intersecting_native(main_points, other_points);
 
             if check_2 {
                 final_sprites.push(sprite2.to_object(py));
