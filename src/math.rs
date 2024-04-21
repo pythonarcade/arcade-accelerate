@@ -41,8 +41,17 @@ pub fn lerp(v1: f32, v2: f32, u: f32) -> f32 {
 }
 
 #[pyfunction]
-pub fn lerp_vec(v1: (f32, f32), v2: (f32, f32), u: f32) -> (f32, f32) {
+pub fn lerp_2d(v1: (f32, f32), v2: (f32, f32), u: f32) -> (f32, f32) {
     (lerp(v1.0, v2.0, u), lerp(v1.1, v2.1, u))
+}
+
+#[pyfunction]
+pub fn lerp_3d(v1: (f32, f32, f32), v2: (f32, f32, f32), u: f32) -> (f32, f32, f32) {
+    (
+        lerp(v1.0, v2.0, u),
+        lerp(v1.1, v2.1, u),
+        lerp(v1.2, v2.2, u),
+    )
 }
 
 #[pyfunction]
@@ -130,7 +139,7 @@ pub fn rand_on_line(pos1: (f32, f32), pos2: (f32, f32)) -> (f32, f32) {
     let mut rng = thread_rng();
     let u: f32 = rng.gen_range(0.0..1.0);
 
-    lerp_vec(pos1, pos2, u)
+    lerp_2d(pos1, pos2, u)
 }
 
 #[pyfunction]
@@ -162,6 +171,29 @@ pub fn rand_vec_magnitude(angle: f32, lo_magnitude: f32, hi_magnitude: f32) -> (
     let mag = rng.gen_range(lo_magnitude..hi_magnitude);
     let vel = _Vec2::from_polar(angle, mag);
     vel.as_tuple()
+}
+
+#[pyfunction]
+pub fn quaternion_rotation(
+    axis: (f32, f32, f32),
+    vector: (f32, f32, f32),
+    angle: f32,
+) -> (f32, f32, f32) {
+    let angle_rads = -angle.to_radians();
+    let (c2, s2) = (f32::cos(angle_rads / 2.0), f32::sin(angle_rads / 2.0));
+
+    let (q0, q1, q2, q3) = (c2, s2 * axis.0, s2 * axis.1, s2 * axis.2);
+    let (q0_2, q1_2, q2_2, q3_2) = (q0.powi(2), q1.powi(2), q2.powi(2), q3.powi(2));
+    let (q01, q02, q03, q12, q13, q23) = (q0 * q1, q0 * q2, q0 * q3, q1 * q2, q1 * q3, q2 * q3);
+
+    let x = vector.0 * (q0_2 + q1_2 - q2_2 - q3_2)
+        + 2.0 * (vector.1 * (q12 - q03) + vector.2 * (q02 + q13));
+    let y = vector.1 * (q0_2 - q1_2 + q2_2 - q3_2)
+        + 2.0 * (vector.0 * (q03 + q12) + vector.2 * (q23 - q01));
+    let z = vector.2 * (q0_2 - q1_2 - q2_2 + q3_2)
+        + 2.0 * (vector.0 * (q13 + q02) + vector.1 * (q01 + q23));
+
+    (x, y, z)
 }
 
 // This is only a subset of _Vec2 methods defined in arcade.math.py
@@ -262,12 +294,21 @@ mod tests {
     }
 
     #[test]
-    fn test_lerp_vec() {
-        let mut result = lerp_vec((0.0, 2.0), (8.0, 4.0), 0.25);
+    fn test_lerp_2d() {
+        let mut result = lerp_2d((0.0, 2.0), (8.0, 4.0), 0.25);
         assert_eq!(result, (2.0, 2.5));
 
-        result = lerp_vec((0.0, 2.0), (8.0, 4.0), -0.25);
+        result = lerp_2d((0.0, 2.0), (8.0, 4.0), -0.25);
         assert_eq!(result, (-2.0, 1.5));
+    }
+
+    #[test]
+    fn test_lerp_3d() {
+        let mut result = lerp_3d((0.0, 2.0, 4.0), (8.0, 4.0, 8.0), 0.25);
+        assert_eq!(result, (2.0, 2.5, 5.0));
+
+        result = lerp_3d((0.0, 2.0, 4.0), (8.0, 4.0, 8.0), -0.25);
+        assert_eq!(result, (-2.0, 1.5, 3.0));
     }
 
     #[test]

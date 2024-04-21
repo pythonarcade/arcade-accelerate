@@ -36,7 +36,8 @@ def patch_math(patches):
     patches["arcade.math"].rotate_point = arcade_accelerate.rotate_point
     patches["arcade.math"].clamp = arcade_accelerate.clamp
     patches["arcade.math"].lerp = arcade_accelerate.lerp
-    patches["arcade.math"].lerp_vec = arcade_accelerate.lerp_vec
+    patches["arcade.math"].lerp_2d = arcade_accelerate.lerp_2d
+    patches["arcade.math"].lerp_3d = arcade_accelerate.lerp_3d
     patches["arcade.math"].lerp_angle = arcade_accelerate.lerp_angle
     patches["arcade.math"].get_distance = arcade_accelerate.get_distance
     patches["arcade.math"].get_angle_degrees = arcade_accelerate.get_angle_degrees
@@ -53,6 +54,7 @@ def patch_math(patches):
         arcade_accelerate.rand_vec_degree_spread
     )
     patches["arcade.math"].rand_vec_magnitude = arcade_accelerate.rand_vec_magnitude
+    patches["arcade.math"].quaternion_rotation = arcade_accelerate.quaternion_rotation
 
 
 def patch_geometry(patches):

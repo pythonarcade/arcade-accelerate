@@ -20,7 +20,8 @@ fn arcade_accelerate(_py: Python, m: &PyModule) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(math::rotate_point, m)?)?;
     m.add_function(wrap_pyfunction!(math::clamp, m)?)?;
     m.add_function(wrap_pyfunction!(math::lerp, m)?)?;
-    m.add_function(wrap_pyfunction!(math::lerp_vec, m)?)?;
+    m.add_function(wrap_pyfunction!(math::lerp_2d, m)?)?;
+    m.add_function(wrap_pyfunction!(math::lerp_3d, m)?)?;
     m.add_function(wrap_pyfunction!(math::lerp_angle, m)?)?;
     m.add_function(wrap_pyfunction!(math::get_distance, m)?)?;
     m.add_function(wrap_pyfunction!(math::get_angle_degrees, m)?)?;
@@ -33,6 +34,7 @@ fn arcade_accelerate(_py: Python, m: &PyModule) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(math::rand_angle_spread_deg, m)?)?;
     m.add_function(wrap_pyfunction!(math::rand_vec_degree_spread, m)?)?;
     m.add_function(wrap_pyfunction!(math::rand_vec_magnitude, m)?)?;
+    m.add_function(wrap_pyfunction!(math::quaternion_rotation, m)?)?;
     m.add_function(wrap_pyfunction!(geometry::are_polygons_intersecting, m)?)?;
     m.add_function(wrap_pyfunction!(geometry::is_point_in_polygon, m)?)?;
     m.add_function(wrap_pyfunction!(geometry::is_point_in_box, m)?)?;
