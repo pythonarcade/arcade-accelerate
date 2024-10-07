@@ -50,8 +50,8 @@ def patch_math(patches):
     patches["arcade.math"].rand_angle_spread_deg = (
         arcade_accelerate.rand_angle_spread_deg
     )
-    patches["arcade.math"].rand_vec_degree_spread = (
-        arcade_accelerate.rand_vec_degree_spread
+    patches["arcade.math"].rand_vec_spread_deg = (
+        arcade_accelerate.rand_vec_spread_deg
     )
     patches["arcade.math"].rand_vec_magnitude = arcade_accelerate.rand_vec_magnitude
     patches["arcade.math"].quaternion_rotation = arcade_accelerate.quaternion_rotation

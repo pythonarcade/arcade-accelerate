@@ -32,7 +32,7 @@ fn arcade_accelerate(_py: Python, m: &PyModule) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(math::rand_on_line, m)?)?;
     m.add_function(wrap_pyfunction!(math::rand_angle_360_deg, m)?)?;
     m.add_function(wrap_pyfunction!(math::rand_angle_spread_deg, m)?)?;
-    m.add_function(wrap_pyfunction!(math::rand_vec_degree_spread, m)?)?;
+    m.add_function(wrap_pyfunction!(math::rand_vec_spread_deg, m)?)?;
     m.add_function(wrap_pyfunction!(math::rand_vec_magnitude, m)?)?;
     m.add_function(wrap_pyfunction!(math::quaternion_rotation, m)?)?;
     m.add_function(wrap_pyfunction!(geometry::are_polygons_intersecting, m)?)?;

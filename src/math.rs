@@ -97,11 +97,11 @@ pub fn get_angle_radians(x1: f32, y1: f32, x2: f32, y2: f32) -> f32 {
 }
 
 #[pyfunction]
-pub fn rand_in_rect(bottom_left: (f32, f32), width: f32, height: f32) -> (f32, f32) {
+pub fn rand_in_rect(rect: (f32, f32, f32, f32, f32, f32, f32, f32)) -> (f32, f32) {
     let mut rng = thread_rng();
 
-    let random_x: f32 = rng.gen_range(bottom_left.0..bottom_left.0 + width);
-    let random_y: f32 = rng.gen_range(bottom_left.1..bottom_left.1 + height);
+    let random_x: f32 = rng.gen_range(rect.0..=rect.1);
+    let random_y: f32 = rng.gen_range(rect.2..=rect.3);
 
     (random_x, random_y)
 }
@@ -159,7 +159,7 @@ pub fn rand_angle_spread_deg(angle: f32, half_angle_spread: f32) -> f32 {
 }
 
 #[pyfunction]
-pub fn rand_vec_degree_spread(angle: f32, half_angle_spread: f32, length: f32) -> (f32, f32) {
+pub fn rand_vec_spread_deg(angle: f32, half_angle_spread: f32, length: f32) -> (f32, f32) {
     let a = rand_angle_spread_deg(angle, half_angle_spread);
     let vel = _Vec2::from_polar(a, length);
     vel.as_tuple()

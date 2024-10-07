@@ -197,7 +197,7 @@ pub fn is_point_in_polygon(x: f32, y: f32, polygon: Vec<(f32, f32)>) -> bool {
             // segment 'i-next', then check if it lies
             // on segment. If it lies, return true, otherwise false
             if get_triangle_orientation(polygon[i], p, polygon[next_item]) == 0 {
-                return !is_point_in_box(polygon[i], p, polygon[next_item]);
+                return is_point_in_box(polygon[i], p, polygon[next_item]);
             }
 
             count += 1
